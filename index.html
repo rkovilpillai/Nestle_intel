@@ -1,0 +1,1343 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Nestlé México · Brand Intelligence · Walmart Connect</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,600;0,700;1,600;1,700&family=Outfit:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.44.0/tabler-icons.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
+<style>
+:root{
+  --bg:#F6F5F8;--card:#FFFFFF;--surface:#F0EEF5;--card2:#FAF9FC;
+  --g1:#9920E7;--g2:#E0309A;--g3:#FC5D3D;--gold:#D4880A;--blue:#1D7AB5;--green:#1A9E5C;
+  --text:#1A1A1A;--t2:rgba(26,26,26,.65);--t3:rgba(26,26,26,.40);--t4:rgba(26,26,26,.22);
+  --bd:rgba(26,26,26,.09);--r:10px;--slate:#7A7280;
+  --grad:linear-gradient(135deg,#9920E7 0%,#E0309A 55%,#FC5D3D 100%);
+  --grad90:linear-gradient(90deg,#9920E7,#E0309A,#FC5D3D);
+  --ff:'Outfit',sans-serif;--fd:'Cormorant Garamond',serif;--fm:'JetBrains Mono',monospace;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:var(--ff);background:var(--bg);color:var(--text);overflow-x:hidden}
+::-webkit-scrollbar{width:3px}::-webkit-scrollbar-track{background:var(--bg)}::-webkit-scrollbar-thumb{background:var(--g1);border-radius:2px}
+
+/* NAV */
+nav{position:fixed;top:0;left:0;right:0;z-index:200;height:56px;display:flex;align-items:center;justify-content:space-between;padding:0 2.5rem;background:rgba(246,245,248,.96);backdrop-filter:blur(14px);border-bottom:1px solid var(--bd)}
+.nav-l{display:flex;align-items:center;gap:12px}
+.nav-brand{width:3px;height:26px;background:var(--grad);border-radius:2px}
+.nav-nt{font-family:var(--fd);font-size:16px;font-weight:700}
+.nav-ns{font-size:9px;letter-spacing:.15em;text-transform:uppercase;color:var(--g1);margin-top:1px}
+.nav-links{display:flex;gap:1.5rem}
+.nav-links a{font-size:11px;font-weight:500;letter-spacing:.06em;text-transform:uppercase;color:var(--t3);text-decoration:none;transition:color .2s}
+.nav-links a:hover,.nav-links a.act{color:var(--g1)}
+.nav-tag{display:flex;align-items:center;gap:5px;padding:4px 12px;border-radius:14px;background:rgba(153,32,231,.08);border:0.5px solid rgba(153,32,231,.25);font-size:10px;font-weight:600;color:var(--g1)}
+.nav-dot{width:5px;height:5px;border-radius:50%;background:var(--g1);animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+
+/* LAYOUT */
+.wrap{max-width:1380px;margin:0 auto;padding:0 2.5rem}
+section{padding:4rem 0 3rem}
+.divl{height:1px;background:linear-gradient(90deg,transparent,rgba(153,32,231,.18),transparent)}
+
+/* TYPE */
+.eye{font-size:10px;font-weight:600;letter-spacing:.18em;text-transform:uppercase;background:var(--grad90);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;display:flex;align-items:center;gap:8px;margin-bottom:.75rem}
+.eye::before{content:'';display:block;width:18px;height:1px;background:var(--g2);flex-shrink:0}
+.h2{font-family:var(--fd);font-size:clamp(26px,3.5vw,42px);font-weight:700;line-height:1.1;margin-bottom:.5rem}
+.h2 em{font-style:italic;background:var(--grad90);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.sub{font-size:13.5px;color:var(--t2);line-height:1.75;max-width:540px;margin-bottom:1.75rem}
+
+/* CARDS */
+.card{background:var(--card);border:0.5px solid var(--bd);border-radius:var(--r);padding:1.25rem 1.4rem;box-shadow:0 1px 3px rgba(0,0,0,.045)}
+.clabel{font-size:9px;font-weight:600;letter-spacing:.13em;text-transform:uppercase;color:var(--slate);margin-bottom:.75rem}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:.9rem}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:.9rem}
+.g4{display:grid;grid-template-columns:repeat(4,1fr);gap:.9rem}
+
+/* KPI TILES */
+.kpi{background:var(--card);border:0.5px solid var(--bd);border-radius:var(--r);padding:1.1rem 1.25rem;position:relative;overflow:hidden;box-shadow:0 1px 4px rgba(0,0,0,.05);transition:transform .2s,box-shadow .2s}
+.kpi:hover{transform:translateY(-2px);box-shadow:0 4px 16px rgba(153,32,231,.1)}
+.kpi::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--grad)}
+.kpi-label{font-size:9.5px;font-weight:600;letter-spacing:.11em;text-transform:uppercase;color:var(--slate);margin-bottom:.4rem}
+.kpi-val{font-family:var(--fd);font-size:32px;font-weight:700;line-height:1;color:var(--g1)}
+.kpi-val.dark{color:var(--text)}
+.kpi-sub{font-size:10.5px;color:var(--slate);margin-top:.3rem}
+.kpi-trend{display:inline-flex;align-items:center;gap:3px;font-size:10px;font-weight:600;padding:2px 7px;border-radius:8px;margin-top:.4rem}
+.kpi-trend.up{background:rgba(26,158,92,.12);color:var(--green)}
+.kpi-trend.dn{background:rgba(232,92,74,.12);color:#E85C4A}
+
+/* INSIGHT BOXES */
+.ins{padding:11px 15px;border-left:2px solid var(--g1);background:rgba(153,32,231,.06);border-radius:0 var(--r) var(--r) 0;font-size:12px;color:var(--t2);line-height:1.65;margin-top:.85rem}
+.ins.gold{border-color:var(--gold);background:rgba(212,136,10,.07)}
+.ins.pink{border-color:var(--g2);background:rgba(224,48,154,.06)}
+.ins.green{border-color:var(--green);background:rgba(26,158,92,.06)}
+.ins strong{color:var(--text);font-weight:500}
+
+/* PRODUCT TABLE */
+.ptbl{width:100%;border-collapse:collapse;font-size:12px}
+.ptbl th{text-align:left;padding:7px 10px;border-bottom:1px solid var(--bd);font-size:9px;font-weight:600;letter-spacing:.09em;text-transform:uppercase;color:var(--slate);cursor:pointer;user-select:none;white-space:nowrap}
+.ptbl th:hover{color:var(--g1)}
+.ptbl th.srt-d::after{content:' ↓'}.ptbl th.srt-a::after{content:' ↑'}
+.ptbl td{padding:8px 10px;border-bottom:0.5px solid rgba(26,26,26,.05);color:var(--t2);vertical-align:middle}
+.ptbl tr:hover td{background:rgba(153,32,231,.03);color:var(--text)}
+.ptbl tr:last-child td{border-bottom:none}
+
+/* STATUS BADGES */
+.badge{display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:8px;font-size:9px;font-weight:700;letter-spacing:.05em;text-transform:uppercase}
+.b-star{background:rgba(153,32,231,.12);color:var(--g1)}
+.b-rising{background:rgba(26,158,92,.12);color:var(--green)}
+.b-watch{background:rgba(212,136,10,.12);color:var(--gold)}
+.b-attn{background:rgba(232,92,74,.12);color:#E85C4A}
+.b-stable{background:rgba(26,26,26,.08);color:var(--slate)}
+
+/* BAR MINI */
+.minibar{height:5px;border-radius:3px;background:rgba(153,32,231,.12);overflow:hidden;margin-top:3px}
+.minibar-fill{height:100%;border-radius:3px}
+
+/* CHANNEL SPLIT */
+.channel-split{display:flex;height:10px;border-radius:5px;overflow:hidden;margin:.6rem 0}
+.ch-on{background:var(--g1)}
+.ch-off{background:var(--g2)}
+
+/* CREATIVE PODIUM */
+.podium{display:grid;grid-template-columns:1fr 1.15fr 1fr;gap:.9rem;align-items:end;margin-bottom:1.25rem}
+.pod-card{background:var(--card);border:0.5px solid var(--bd);border-radius:var(--r);padding:1.25rem;position:relative;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,.05)}
+.pod-card.gold-border{border-color:rgba(212,136,10,.5);box-shadow:0 0 0 1px rgba(212,136,10,.2),0 4px 20px rgba(212,136,10,.1)}
+.pod-rank{font-family:var(--fd);font-size:52px;font-weight:700;line-height:1;margin-bottom:.4rem}
+.pod-rank.r1{background:var(--grad90);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.pod-rank.r2{color:rgba(26,26,26,.35)}
+.pod-rank.r3{color:rgba(26,26,26,.25)}
+.pod-name{font-size:11px;font-weight:600;color:var(--text);margin-bottom:.3rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pod-product{font-size:10px;color:var(--slate);margin-bottom:.7rem}
+.pod-metrics{display:grid;grid-template-columns:1fr 1fr 1fr;gap:.4rem}
+.pod-met{text-align:center;padding:.4rem .2rem;background:var(--surface);border-radius:6px}
+.pod-met-v{font-size:14px;font-weight:700}
+.pod-met-l{font-size:8px;color:var(--slate);text-transform:uppercase;letter-spacing:.07em}
+.pod-tag{position:absolute;top:10px;right:10px;font-size:8px;font-weight:700;letter-spacing:.06em;padding:2px 7px;border-radius:6px;background:var(--grad);color:#fff}
+
+/* HALO NETWORK */
+.halo-grid{display:flex;flex-direction:column;gap:.55rem}
+.halo-row{display:flex;align-items:center;gap:.75rem;padding:.65rem .9rem;background:var(--card);border:0.5px solid var(--bd);border-radius:8px;transition:all .15s}
+.halo-row:hover{border-color:rgba(153,32,231,.3);transform:translateX(3px)}
+.halo-pct-bar{flex:1;height:6px;background:rgba(153,32,231,.1);border-radius:3px;overflow:hidden}
+.halo-pct-fill{height:100%;background:var(--grad90);border-radius:3px}
+.halo-pct{font-size:13px;font-weight:700;color:var(--g1);width:42px;text-align:right}
+.halo-name{font-size:11.5px;font-weight:500;color:var(--text);width:160px;flex-shrink:0}
+.halo-reason{font-size:10.5px;color:var(--slate);flex:1}
+
+/* HEATMAP */
+.heatmap-wrap{overflow-x:auto}
+.heatmap-grid{display:grid;grid-template-columns:60px repeat(24,1fr);gap:2px;min-width:700px}
+.hm-cell{height:26px;border-radius:3px;display:flex;align-items:center;justify-content:center;font-size:8px;font-weight:500;transition:transform .1s;cursor:default}
+.hm-cell:hover{transform:scale(1.3);z-index:10;border-radius:2px}
+.hm-label{font-size:9.5px;font-weight:500;color:var(--slate);display:flex;align-items:center;padding-right:6px;height:26px}
+.hm-hour{font-size:8px;color:var(--t3);text-align:center;line-height:26px}
+
+/* AUDIENCE BARS */
+.aud-row{display:grid;grid-template-columns:180px 1fr 70px 70px 60px;align-items:center;gap:.75rem;padding:.65rem .85rem;background:var(--card);border:0.5px solid var(--bd);border-radius:8px;margin-bottom:.5rem;transition:all .15s}
+.aud-row:hover{border-color:rgba(153,32,231,.28);box-shadow:0 2px 10px rgba(153,32,231,.07)}
+.aud-name{font-size:12px;font-weight:500;color:var(--text)}
+.aud-type{font-size:9px;font-weight:600;padding:1px 6px;border-radius:5px;margin-top:2px;display:inline-block}
+.aud-buyer{background:rgba(153,32,231,.1);color:var(--g1)}
+.aud-affinity{background:rgba(29,122,181,.1);color:var(--blue)}
+.aud-sitert{background:rgba(26,158,92,.1);color:var(--green)}
+.aud-bar-wrap{height:6px;background:rgba(26,26,26,.06);border-radius:3px;overflow:hidden}
+.aud-bar-fill{height:100%;border-radius:3px}
+
+/* GEO TABLE */
+.geo-flag{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:5px}
+
+/* FILTER PILLS */
+.fp-row{display:flex;gap:5px;margin-bottom:1rem;flex-wrap:wrap}
+.fp{padding:4px 12px;border-radius:12px;border:0.5px solid var(--bd);background:transparent;font-family:var(--ff);font-size:11px;font-weight:500;cursor:pointer;color:var(--t3);transition:all .15s}
+.fp:hover{border-color:rgba(153,32,231,.3);color:var(--g1)}
+.fp.on{background:rgba(153,32,231,.08);border-color:rgba(153,32,231,.3);color:var(--g1);font-weight:600}
+
+/* HERO */
+.hero{padding:4.5rem 0 3rem;display:grid;grid-template-columns:1.1fr 1fr;gap:5rem;align-items:center}
+.hero-eye{font-size:10px;font-weight:600;letter-spacing:.18em;text-transform:uppercase;background:var(--grad90);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:.75rem;display:flex;align-items:center;gap:8px}
+.hero-eye::before{content:'';display:block;width:20px;height:1px;background:var(--g2);flex-shrink:0}
+.hero-h1{font-family:var(--fd);font-size:clamp(34px,4.5vw,58px);font-weight:700;line-height:1.0;margin-bottom:.8rem}
+.hero-h1 em{font-style:italic;background:var(--grad90);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.hero-p{font-size:13.5px;color:var(--t2);line-height:1.75;max-width:480px;margin-bottom:1.5rem}
+
+/* ROAS HERO CARD */
+.roas-hero{background:var(--text);border-radius:14px;padding:1.75rem;color:#fff;position:relative;overflow:hidden}
+.roas-hero::before{content:'';position:absolute;top:-60px;right:-60px;width:200px;height:200px;background:radial-gradient(circle,rgba(153,32,231,.4),transparent 70%);pointer-events:none}
+.rh-label{font-size:9px;font-weight:600;letter-spacing:.15em;text-transform:uppercase;color:rgba(255,255,255,.5);margin-bottom:.5rem}
+.rh-val{font-family:var(--fd);font-size:72px;font-weight:700;line-height:1;background:var(--grad90);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.rh-desc{font-size:12px;color:rgba(255,255,255,.6);margin-top:.4rem;margin-bottom:1.25rem}
+.rh-split{display:grid;grid-template-columns:1fr 1fr 1fr;gap:.6rem;margin-top:1rem}
+.rh-item{background:rgba(255,255,255,.08);border-radius:8px;padding:.65rem .8rem}
+.rh-item-v{font-family:var(--fd);font-size:22px;font-weight:700;color:#fff}
+.rh-item-l{font-size:9px;color:rgba(255,255,255,.45);text-transform:uppercase;letter-spacing:.08em;margin-top:2px}
+
+footer{padding:2rem 2.5rem;border-top:1px solid var(--bd);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:.75rem}
+.sim-tag{display:flex;align-items:center;gap:6px;font-size:10px;color:var(--t3);padding:4px 10px;background:rgba(212,136,10,.06);border:0.5px solid rgba(212,136,10,.2);border-radius:8px}
+
+/* Map */
+#map-leaflet{height:480px;border-radius:var(--r);overflow:hidden;border:0.5px solid var(--bd)}
+.leaflet-container{background:#DDD8E8 !important;font-family:var(--ff) !important}
+.leaflet-tile{filter:brightness(.92) saturate(.4)}
+.leaflet-control-zoom a{background:#fff !important;color:rgba(26,26,26,.6) !important;border-color:var(--bd) !important}
+.leaflet-control-zoom a:hover{color:var(--g1) !important}
+.leaflet-tooltip{background:#fff !important;border:0.5px solid var(--bd) !important;color:rgba(26,26,26,.7) !important;border-radius:8px !important;padding:9px 13px !important;font-family:var(--ff) !important;font-size:11.5px !important;box-shadow:0 4px 20px rgba(0,0,0,.1) !important}
+.leaflet-tooltip::before{display:none !important}
+.tt-name{display:block;color:#1A1A1A;font-size:13px;font-weight:600;margin-bottom:4px}
+.tt-row{display:flex;justify-content:space-between;gap:14px;margin-top:2px;font-size:11px}
+.tt-k{color:#7A7280}.tt-v{color:#1A1A1A;font-weight:600}
+.map-leg{display:flex;align-items:center;gap:8px;font-size:10.5px;color:var(--slate);margin-top:6px}
+.map-fp{padding:4px 11px;border-radius:12px;border:0.5px solid var(--bd);background:transparent;font-family:var(--ff);font-size:11px;font-weight:500;cursor:pointer;color:var(--t3);transition:all .15s}
+.map-fp:hover{border-color:rgba(153,32,231,.3);color:var(--g1)}
+.map-fp.on{background:rgba(153,32,231,.08);border-color:rgba(153,32,231,.3);color:var(--g1);font-weight:600}
+
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-l">
+    <div class="nav-brand"></div>
+    <div>
+      <div class="nav-nt">Nestlé México · Brand Intelligence</div>
+      <div class="nav-ns">Walmart Connect · April 2026</div>
+    </div>
+  </div>
+  <div class="nav-links">
+    <a href="#portfolio" class="act">Portfolio</a>
+    <a href="#products">Products</a>
+    <a href="#creatives">Creatives</a>
+    <a href="#halo">Halo Effect</a>
+    <a href="#audience">Audience</a>
+    <a href="#timing">Timing</a>
+    <a href="#geo">Geography</a>
+    <a href="#playbook">May Playbook</a>
+  </div>
+  <div class="nav-tag"><div class="nav-dot"></div>Walmart Connect · Infillion</div>
+</nav>
+
+<!-- ═══ HERO ═══════════════════════════════════════════════════════════════ -->
+<div style="padding-top:56px">
+<div class="wrap">
+<div class="hero">
+  <div>
+    <div class="hero-eye">Retail Media Intelligence · April 2026</div>
+    <h1 class="hero-h1">Everything Walmart<br>knows about <em>your brand</em></h1>
+    <p class="hero-p">8 products. 9 creatives. 30,990 conversions. This report shows Nestlé exactly which products, creatives, audiences, and moments are driving growth on Walmart Connect Mexico — and where the opportunity still sits.</p>
+    <div style="display:flex;gap:1.5rem;font-size:12px;color:var(--t3);flex-wrap:wrap">
+      <span><i class="ti ti-calendar" style="font-size:12px;vertical-align:-2px"></i> April 1 – May 1, 2026</span>
+      <span><i class="ti ti-building-store" style="font-size:12px;vertical-align:-2px"></i> Onsite + Offsite</span>
+      <span><i class="ti ti-map-pin" style="font-size:12px;vertical-align:-2px"></i> 12 Mexican states</span>
+    </div>
+  </div>
+  <div>
+    <div class="roas-hero">
+      <div class="rh-label">Blended ROAS · Online + Offline</div>
+      <div class="rh-val">7.2×</div>
+      <div class="rh-desc">Every peso spent on Walmart Connect generated 7.2 pesos in total retail revenue — including in-store conversions attributed through Walmart's purchase event pixel.</div>
+      <div class="rh-split">
+        <div class="rh-item"><div class="rh-item-v">$4.2M</div><div class="rh-item-l">Online revenue</div></div>
+        <div class="rh-item"><div class="rh-item-v">$11.7M</div><div class="rh-item-l">Offline est.</div></div>
+        <div class="rh-item"><div class="rh-item-v">30,990</div><div class="rh-item-l">Conversions</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+</div>
+
+<div class="divl"></div>
+
+<!-- ═══ PORTFOLIO PULSE ═══════════════════════════════════════════════════ -->
+<section id="portfolio">
+<div class="wrap">
+  <div class="eye">Brand portfolio pulse</div>
+  <h2 class="h2">The full <em>picture</em> — April 2026</h2>
+  <p class="sub">Across 8 product lines and 2 channels — here is where Nestlé's Walmart Connect investment is going and what it is returning.</p>
+
+  <div class="g4" style="margin-bottom:1rem">
+    <div class="kpi"><div class="kpi-label">Total conversions</div><div class="kpi-val">30,990</div><div class="kpi-sub">Online + Offsite · April</div><div class="kpi-trend up"><i class="ti ti-trending-up" style="font-size:11px"></i> +14% vs March</div></div>
+    <div class="kpi"><div class="kpi-label">Online revenue</div><div class="kpi-val dark">$4.17M</div><div class="kpi-sub">MXN · Direct digital</div><div class="kpi-trend up"><i class="ti ti-trending-up" style="font-size:11px"></i> +11% vs March</div></div>
+    <div class="kpi"><div class="kpi-label">Offline revenue est.</div><div class="kpi-val dark">$11.69M</div><div class="kpi-sub">In-store attributed</div><div class="kpi-trend up"><i class="ti ti-trending-up" style="font-size:11px"></i> 70% of total ROAS</div></div>
+    <div class="kpi"><div class="kpi-label">Total impressions</div><div class="kpi-val dark">16.9M</div><div class="kpi-sub">Onsite + Offsite</div><div class="kpi-sub" style="margin-top:2px">Avg CTR: 1.38%</div></div>
+  </div>
+
+  <div class="g2">
+    <div class="card">
+      <div class="clabel">Onsite vs Offsite · revenue split</div>
+      <div style="margin-bottom:.75rem">
+        <div class="channel-split">
+          <div class="ch-on" style="width:68%"></div>
+          <div class="ch-off" style="width:32%"></div>
+        </div>
+        <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--t2)">
+          <span style="display:flex;align-items:center;gap:5px"><span style="width:8px;height:8px;border-radius:2px;background:var(--g1);display:inline-block"></span>Onsite <strong style="color:var(--text)">68% · $2.84M</strong></span>
+          <span style="display:flex;align-items:center;gap:5px"><span style="width:8px;height:8px;border-radius:2px;background:var(--g2);display:inline-block"></span>Offsite <strong style="color:var(--text)">32% · $1.33M</strong></span>
+        </div>
+      </div>
+      <div class="ins"><strong>Onsite dominates</strong> — shoppers actively browsing Walmart.com convert at 2.1× the rate of offsite audiences. Onsite placements account for 68% of digital revenue at an average CPA of $36 vs offsite $54. The implication: increase Onsite allocation before expanding Offsite reach.</div>
+    </div>
+    <div class="card">
+      <div class="clabel">30-day conversion trend · top 5 products</div>
+      <div style="height:200px"><canvas id="trend-chart"></canvas></div>
+    </div>
+  </div>
+</div>
+</section>
+
+<div class="divl"></div>
+
+<!-- ═══ PRODUCT PERFORMANCE ══════════════════════════════════════════════ -->
+<section id="products">
+<div class="wrap">
+  <div class="eye">Product intelligence</div>
+  <h2 class="h2">Which products are <em>winning</em></h2>
+  <p class="sub">Across 8 product lines — ranked by total conversions. Click any column to re-sort. The status column tells the story at a glance.</p>
+
+  <div class="g3" style="margin-bottom:1.25rem">
+    <div class="card" style="border-top:2px solid var(--g1)">
+      <div class="clabel" style="color:var(--g1)">⭐ Star performers</div>
+      <div style="font-size:12.5px;color:var(--t2);line-height:1.7"><strong style="color:var(--text)">Nescafé Clásico</strong> and <strong style="color:var(--text)">Maggi Sazonador</strong> lead the portfolio — combined they account for 56% of all conversions and 62% of online revenue. Both are growing month-over-month.</div>
+    </div>
+    <div class="card" style="border-top:2px solid var(--green)">
+      <div class="clabel" style="color:var(--green)">🚀 Rising stars</div>
+      <div style="font-size:12.5px;color:var(--t2);line-height:1.7"><strong style="color:var(--text)">Nido Crecimiento</strong> is growing at +22% MoM — the fastest in the portfolio — driven by a strong onsite creative pairing nutrition messaging with price. <strong style="color:var(--text)">Purina Dog Chow</strong> is up +14%.</div>
+    </div>
+    <div class="card" style="border-top:2px solid #E85C4A">
+      <div class="clabel" style="color:#E85C4A">⚠️ Needs attention</div>
+      <div style="font-size:12.5px;color:var(--t2);line-height:1.7"><strong style="color:var(--text)">Nestlé Chocolate</strong> is declining -12% MoM despite 2.4M impressions. The creative is awareness-style in a performance environment — a brief reset is needed. <strong style="color:var(--text)">KitKat</strong> is flat at -4%.</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.9rem">
+      <div class="clabel" style="margin-bottom:0">All products · sortable</div>
+      <div class="fp-row" style="margin-bottom:0">
+        <button class="fp on" onclick="sortProd('conv',this)">Conversions</button>
+        <button class="fp" onclick="sortProd('roas',this)">ROAS</button>
+        <button class="fp" onclick="sortProd('cpa',this)">CPA</button>
+        <button class="fp" onclick="sortProd('trend',this)">Trend</button>
+      </div>
+    </div>
+    <table class="ptbl" id="prod-tbl">
+      <thead><tr>
+        <th onclick="sortProd('name',this)" style="width:18%">Product</th>
+        <th onclick="sortProd('category',this)" style="width:10%">Category</th>
+        <th onclick="sortProd('status',this)" style="width:8%">Status</th>
+        <th onclick="sortProd('conv',this)" style="width:10%" class="srt-d">Total Conv.</th>
+        <th style="width:16%">Onsite / Offsite</th>
+        <th onclick="sortProd('roas',this)" style="width:7%">ROAS</th>
+        <th onclick="sortProd('cpa',this)" style="width:7%">CPA</th>
+        <th onclick="sortProd('ctr',this)" style="width:6%">CTR</th>
+        <th onclick="sortProd('trend',this)" style="width:8%">vs Last Mo.</th>
+        <th style="width:10%">Conv. share</th>
+      </tr></thead>
+      <tbody id="prod-tbody"></tbody>
+    </table>
+  </div>
+</div>
+</section>
+
+<div class="divl"></div>
+
+<!-- ═══ CREATIVE PODIUM ═══════════════════════════════════════════════════ -->
+<section id="creatives">
+<div class="wrap">
+  <div class="eye">Creative intelligence</div>
+  <h2 class="h2">The creative <em>podium</em></h2>
+  <p class="sub">9 creatives. Ranked by conversions, CTR, and view-to-conversion rate. These are the ads actually driving Nestlé's results on Walmart Connect — and the pattern is unmistakable.</p>
+
+  <!-- PODIUM -->
+  <div class="podium" id="podium-wrap"></div>
+
+  <!-- SORT PILLS -->
+  <div style="display:flex;gap:.5rem;align-items:center;margin-bottom:1rem;flex-wrap:wrap">
+    <span style="font-size:11px;color:var(--slate)">Rank by:</span>
+    <button class="fp on" onclick="sortPodium('conv',this)">Conversions</button>
+    <button class="fp" onclick="sortPodium('ctr',this)">CTR</button>
+    <button class="fp" onclick="sortPodium('view_to_conv',this)">View → Conv</button>
+    <button class="fp" onclick="sortPodium('roas',this)">ROAS</button>
+  </div>
+
+  <!-- FULL CREATIVE TABLE -->
+  <div class="card">
+    <div class="clabel">All creatives · full detail</div>
+    <table class="ptbl" id="creative-tbl">
+      <thead><tr>
+        <th style="width:5%">Rank</th>
+        <th style="width:22%">Creative</th>
+        <th style="width:14%">Product</th>
+        <th style="width:8%">Channel</th>
+        <th style="width:8%">Format</th>
+        <th style="width:8%">Message</th>
+        <th style="width:7%">CTR</th>
+        <th style="width:7%">Conv.</th>
+        <th style="width:8%">View→Conv</th>
+        <th style="width:7%">CPA</th>
+        <th style="width:8%">ROAS</th>
+      </tr></thead>
+      <tbody id="creative-tbody"></tbody>
+    </table>
+    <div class="ins gold" style="margin-top:.9rem"><strong>The pattern is clear:</strong> The 3 highest-converting creatives all share the same formula — Onsite channel + Price callout + CTA button + product-forward imagery. CR-003 (Nescafé 300×600 Promo + Retail) leads at 2.70% CTR and 12.4× ROAS. The 2 lowest-converting creatives are brand-awareness formats running offsite with no price and no CTA. Same brand, 4× worse performance.</div>
+  </div>
+</div>
+</section>
+
+<div class="divl"></div>
+
+<!-- ═══ HALO EFFECT ════════════════════════════════════════════════════════ -->
+<section id="halo">
+<div class="wrap">
+  <div class="eye">Brand halo effect</div>
+  <h2 class="h2">One purchase opens <em>the basket</em></h2>
+  <p class="sub">When a Walmart shopper converts on a Nestlé product, what else do they buy in the same session? This cross-purchase data reveals the portfolio synergies your media plan isn't exploiting yet.</p>
+
+  <div style="margin-bottom:.85rem;display:flex;gap:.5rem">
+    <button class="fp on" onclick="showHalo('Nescafé Clásico',this)">Nescafé Clásico</button>
+    <button class="fp" onclick="showHalo('Nido Crecimiento',this)">Nido Crecimiento</button>
+    <button class="fp" onclick="showHalo('KitKat Multipack',this)">KitKat Multipack</button>
+  </div>
+
+  <div class="g2" style="align-items:start">
+    <div>
+      <div class="card" style="margin-bottom:.85rem">
+        <div class="clabel" id="halo-title">When a shopper buys Nescafé Clásico, they also buy...</div>
+        <div class="halo-grid" id="halo-grid"></div>
+      </div>
+      <div class="ins green" id="halo-insight"></div>
+    </div>
+    <div class="card">
+      <div class="clabel">Why this matters for your media plan</div>
+      <div style="font-size:12.5px;color:var(--t2);line-height:1.8;margin-bottom:.85rem">Cross-purchase data reveals portfolio synergies invisible in product-level reporting. A shopper who buys Nescafé is 34% likely to also buy Maggi in the same session — which means a Nescafé campaign is partially funding Maggi's conversion too.</div>
+      <div style="display:flex;flex-direction:column;gap:.5rem">
+        <div style="display:flex;gap:8px;align-items:flex-start">
+          <i class="ti ti-arrow-right" style="font-size:14px;color:var(--g1);margin-top:1px;flex-shrink:0"></i>
+          <div style="font-size:12px;color:var(--t2)"><strong style="color:var(--text)">Sequential targeting opportunity:</strong> Serve Maggi ads to shoppers who just purchased Nescafé. The basket affinity is already there.</div>
+        </div>
+        <div style="display:flex;gap:8px;align-items:flex-start">
+          <i class="ti ti-arrow-right" style="font-size:14px;color:var(--g1);margin-top:1px;flex-shrink:0"></i>
+          <div style="font-size:12px;color:var(--t2)"><strong style="color:var(--text)">Bundle creative:</strong> A "Nescafé + Maggi" combo creative on Onsite could capture both conversion events in a single impression. No other DSP has this signal.</div>
+        </div>
+        <div style="display:flex;gap:8px;align-items:flex-start">
+          <i class="ti ti-arrow-right" style="font-size:14px;color:var(--g1);margin-top:1px;flex-shrink:0"></i>
+          <div style="font-size:12px;color:var(--t2)"><strong style="color:var(--text)">Portfolio ROAS vs product ROAS:</strong> When you factor in halo conversions, Nescafé's effective ROAS is closer to 11× — not the reported 8.4×. This is the number to show in a QBR.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</section>
+
+<div class="divl"></div>
+
+<!-- ═══ AUDIENCE INTELLIGENCE ════════════════════════════════════════════ -->
+<section id="audience">
+<div class="wrap">
+  <div class="eye">Audience intelligence</div>
+  <h2 class="h2">Who is actually <em>buying</em></h2>
+  <p class="sub">5 audience segments. Each has a different conversion profile, CPA, and ROAS. The Walmart Buyer signal is uniquely powerful — and it is only available here.</p>
+
+  <div class="g2" style="align-items:start">
+    <div>
+      <div style="display:flex;flex-direction:column;gap:0" id="aud-grid"></div>
+      <div class="ins" style="margin-top:.85rem"><strong>SiteRT is the hidden weapon:</strong> 420k users, 1,640 conversions, $18 CPA — the smallest audience but the highest conversion rate in the portfolio. These are shoppers who visited Nestlé product pages on Walmart.com and didn't convert. Retargeting them costs 42% less than any other segment.</div>
+    </div>
+    <div>
+      <div class="card" style="margin-bottom:.85rem">
+        <div class="clabel">Conversion share by segment</div>
+        <div style="height:220px"><canvas id="aud-chart"></canvas></div>
+      </div>
+      <div class="card">
+        <div class="clabel">Segment CPA comparison</div>
+        <div style="height:190px"><canvas id="aud-cpa-chart"></canvas></div>
+        <div class="ins pink" style="margin-top:.75rem"><strong>Walmart Buyers convert at 3.8× the rate of affinity audiences</strong> at 37% lower CPA. Shifting 20% of affinity budget to buyer segments would reduce blended CPA by ~$12 and increase conversions by ~18%.</div>
+      </div>
+    </div>
+  </div>
+</div>
+</section>
+
+<div class="divl"></div>
+
+<!-- ═══ TIMING INTELLIGENCE ══════════════════════════════════════════════ -->
+<section id="timing">
+<div class="wrap">
+  <div class="eye">Conversion timing</div>
+  <h2 class="h2">When your shoppers <em>convert</em></h2>
+  <p class="sub">Conversions by hour of day and day of week across all Nestlé products on Walmart Connect Mexico. The pattern reveals exactly when to concentrate spend.</p>
+
+  <div class="card" style="margin-bottom:.85rem">
+    <div class="clabel">Conversion heatmap · hour × day (darker = more conversions)</div>
+    <div class="heatmap-wrap">
+      <div class="heatmap-grid" id="heatmap"></div>
+    </div>
+    <div style="display:flex;gap:1rem;margin-top:.75rem;font-size:10px;color:var(--slate);flex-wrap:wrap">
+      <span>Days: Mon–Sun (left to right columns shown as rows)</span>
+      <span style="margin-left:auto">Hours: 0:00–23:00</span>
+    </div>
+  </div>
+
+  <div class="g3">
+    <div class="card" style="border-top:2px solid var(--g1)">
+      <div class="clabel" style="color:var(--g1)">Peak window</div>
+      <div style="font-family:var(--fd);font-size:26px;font-weight:700;color:var(--text);margin:.3rem 0">7pm – 9pm</div>
+      <div style="font-size:12px;color:var(--t2)">Weekday evenings account for <strong>34%</strong> of all conversions. The shopper has finished work, is planning dinner, and is on their phone. Nescafé and Maggi dominate this window.</div>
+    </div>
+    <div class="card" style="border-top:2px solid var(--g2)">
+      <div class="clabel" style="color:var(--g2)">Weekend peak</div>
+      <div style="font-family:var(--fd);font-size:26px;font-weight:700;color:var(--text);margin:.3rem 0">Sat 9am – 11am</div>
+      <div style="font-size:12px;color:var(--t2)">Weekend morning browsing drives <strong>Nido and KitKat</strong> conversions — family shopping decisions made before the weekly Walmart trip. 2.2× baseline conversion rate.</div>
+    </div>
+    <div class="card" style="border-top:2px solid var(--gold)">
+      <div class="clabel" style="color:var(--gold)">Opportunity gap</div>
+      <div style="font-family:var(--fd);font-size:26px;font-weight:700;color:var(--text);margin:.3rem 0">Mon 12pm – 2pm</div>
+      <div style="font-size:12px;color:var(--t2)">Weekday lunch hour shows <strong>1.6× baseline</strong> with only 60% of peak-hour budget allocated. Shifting 15% of evening budget to this window could add ~480 incremental conversions monthly.</div>
+    </div>
+  </div>
+</div>
+</section>
+
+<div class="divl"></div>
+
+<!-- ═══ GEOGRAPHY ════════════════════════════════════════════════════════ -->
+<section id="geo">
+<div class="wrap">
+  <div class="eye">Geographic intelligence</div>
+  <h2 class="h2">Where Mexico is <em>buying Nestlé</em></h2>
+  <p class="sub">12 states. Each with different conversion volumes, revenue density, and top product. The geographic pattern tells you where to concentrate investment — and where the untapped potential sits.</p>
+
+  <!-- Map metric toggle -->
+  <div style="display:flex;gap:5px;margin-bottom:.85rem">
+    <button class="map-fp on" onclick="setMapMode('conv',this)">By conversions</button>
+    <button class="map-fp" onclick="setMapMode('roas',this)">By ROAS</button>
+    <button class="map-fp" onclick="setMapMode('rev',this)">By revenue</button>
+  </div>
+
+  <!-- Leaflet map -->
+  <div id="map-leaflet"></div>
+  <div class="map-leg">
+    <span id="map-leg-lo"></span>
+    <canvas id="map-leg-c" width="120" height="6" style="border-radius:3px"></canvas>
+    <span id="map-leg-hi"></span>
+    <span style="margin-left:auto;font-size:10px">
+      <span style="display:inline-flex;align-items:center;gap:4px;margin-right:10px"><span style="width:8px;height:8px;border-radius:50%;background:#1A9E5C;display:inline-block"></span>ROAS ≥ 9×</span>
+      <span style="display:inline-flex;align-items:center;gap:4px;margin-right:10px"><span style="width:8px;height:8px;border-radius:50%;background:#9920E7;display:inline-block"></span>ROAS 7–9×</span>
+      <span style="display:inline-flex;align-items:center;gap:4px"><span style="width:8px;height:8px;border-radius:50%;background:#D4880A;display:inline-block"></span>ROAS &lt; 7×</span>
+      <span style="margin-left:8px;color:var(--t4)">Bubble size = conversions · hover for detail</span>
+    </span>
+  </div>
+
+  <div class="g2" style="margin-top:.85rem;align-items:start">
+    <div class="card">
+      <div class="clabel">State performance · click column to sort</div>
+      <table class="ptbl" id="geo-tbl">
+        <thead><tr>
+          <th onclick="sortGeo('state',this)" style="width:22%">State</th>
+          <th onclick="sortGeo('conv',this)" style="width:14%" class="srt-d">Conversions</th>
+          <th onclick="sortGeo('rev',this)" style="width:14%">Revenue (MXN)</th>
+          <th onclick="sortGeo('roas',this)" style="width:10%">ROAS</th>
+          <th onclick="sortGeo('cpa',this)" style="width:10%">CPA</th>
+          <th style="width:30%">Top product</th>
+        </tr></thead>
+        <tbody id="geo-tbody"></tbody>
+      </table>
+    </div>
+    <div>
+      <div class="card" style="margin-bottom:.85rem">
+        <div class="clabel">Revenue by state · top 6</div>
+        <div style="height:220px"><canvas id="geo-chart"></canvas></div>
+      </div>
+      <div class="card">
+        <div class="clabel">Three geographic insights</div>
+        <div style="display:flex;flex-direction:column;gap:.75rem;margin-top:.25rem">
+          <div style="display:flex;gap:8px;align-items:flex-start">
+            <div style="width:6px;height:6px;border-radius:50%;background:var(--g1);margin-top:5px;flex-shrink:0"></div>
+            <div style="font-size:12px;color:var(--t2)"><strong style="color:var(--text)">CDMX + Estado de México = 57% of all revenue</strong> — the metro area is the portfolio's anchor. Concentration risk: a single campaign pause here loses more than half the month's volume.</div>
+          </div>
+          <div style="display:flex;gap:8px;align-items:flex-start">
+            <div style="width:6px;height:6px;border-radius:50%;background:var(--g2);margin-top:5px;flex-shrink:0"></div>
+            <div style="font-size:12px;color:var(--t2)"><strong style="color:var(--text)">Nuevo León and Querétaro are efficiency outliers</strong> — both achieve ROAS above 8× at below-average CPA, yet receive less than 12% of the budget. These are under-invested markets with strong shopper intent.</div>
+          </div>
+          <div style="display:flex;gap:8px;align-items:flex-start">
+            <div style="width:6px;height:6px;border-radius:50%;background:var(--gold);margin-top:5px;flex-shrink:0"></div>
+            <div style="font-size:12px;color:var(--t2)"><strong style="color:var(--text)">Purina Dog Chow leads in Chihuahua and Sonora</strong> — northern states where pet ownership rates are highest. A geo-targeted Purina campaign in the north could yield 2× the conversion rate vs national targeting.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</section>
+
+
+<div class="divl"></div>
+
+<!-- ═══ MAY PLAYBOOK ════════════════════════════════════════════════════ -->
+<section id="playbook">
+<div class="wrap">
+  <div class="eye">May 2026 playbook</div>
+  <h2 class="h2">Six moves. Same budget. <em>Better results.</em></h2>
+  <p class="sub">Every recommendation below is sourced directly from April's performance data. No guesswork — each action has a signal, a specific move, and a projected outcome attached to it.</p>
+
+  <!-- SUMMARY ROW -->
+  <div class="g4" style="margin-bottom:1.75rem" id="pb-summary">
+    <div class="kpi" style="border-top:2px solid var(--g1)">
+      <div class="kpi-label">Projected incremental conv.</div>
+      <div class="kpi-val">+4,080</div>
+      <div class="kpi-sub">On top of April's 30,990</div>
+      <div class="kpi-trend up">↑ +13.2% uplift</div>
+    </div>
+    <div class="kpi" style="border-top:2px solid var(--green)">
+      <div class="kpi-label">CPA improvement</div>
+      <div class="kpi-val dark">$47 → $40</div>
+      <div class="kpi-sub">Blended portfolio CPA</div>
+      <div class="kpi-trend up">↓ $7.40 per conversion</div>
+    </div>
+    <div class="kpi" style="border-top:2px solid var(--gold)">
+      <div class="kpi-label">Budget approach</div>
+      <div class="kpi-val dark" style="font-size:22px;margin-top:4px">Reallocation</div>
+      <div class="kpi-sub">Net neutral — no new spend</div>
+      <div class="kpi-trend up">Same budget, better allocation</div>
+    </div>
+    <div class="kpi" style="border-top:2px solid var(--blue)">
+      <div class="kpi-label">Highest single move</div>
+      <div class="kpi-val dark" style="font-size:22px;margin-top:4px">SiteRT +$95k</div>
+      <div class="kpi-sub">+920 conv at $18 CPA</div>
+      <div class="kpi-trend up">18.4× ROAS guaranteed</div>
+    </div>
+  </div>
+
+  <!-- TYPE FILTER -->
+  <div class="fp-row" id="pb-filters">
+    <button class="fp on" onclick="filterPB('all',this)">All 6 actions</button>
+    <button class="fp" onclick="filterPB('scale',this)">📈 Scale</button>
+    <button class="fp" onclick="filterPB('reset',this)">🔄 Reset</button>
+    <button class="fp" onclick="filterPB('unlock',this)">🔓 Unlock</button>
+    <button class="fp" onclick="filterPB('geo',this)">📍 Geo shift</button>
+    <button class="fp" onclick="filterPB('halo',this)">🔗 Halo</button>
+  </div>
+
+  <!-- ACTION CARDS -->
+  <div id="pb-cards" style="display:flex;flex-direction:column;gap:1rem"></div>
+
+  <!-- BEFORE / AFTER VISUAL -->
+  <div class="card" style="margin-top:1.75rem">
+    <div class="clabel">Projected May portfolio vs April actuals</div>
+    <div class="g2" style="margin-top:.5rem;gap:1.5rem;align-items:center">
+      <div>
+        <div style="height:220px"><canvas id="pb-chart"></canvas></div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:.85rem">
+        <div style="padding:1.1rem 1.25rem;background:var(--surface);border-radius:var(--r);border:0.5px solid var(--bd)">
+          <div style="font-size:9px;font-weight:600;letter-spacing:.11em;text-transform:uppercase;color:var(--slate);margin-bottom:.4rem">What stays the same</div>
+          <div style="font-size:12.5px;color:var(--t2);line-height:1.7">Total budget envelope. Channel mix ratio (68% onsite). Number of active products. Campaign flight structure. All 6 moves are funded through internal reallocation — no new investment required from Nestlé.</div>
+        </div>
+        <div style="padding:1.1rem 1.25rem;background:rgba(153,32,231,.05);border-radius:var(--r);border:0.5px solid rgba(153,32,231,.2)">
+          <div style="font-size:9px;font-weight:600;letter-spacing:.11em;text-transform:uppercase;color:var(--g1);margin-bottom:.4rem">What changes</div>
+          <div style="font-size:12.5px;color:var(--t2);line-height:1.7">Budget weight shifts to the creatives and geos already proven to work. SiteRT gets a meaningful allocation for the first time. Two under-performing creatives are paused. One entirely new audience sequence — the Nescafé→Maggi halo — goes live.</div>
+        </div>
+        <div style="padding:1.1rem 1.25rem;background:rgba(26,158,92,.05);border-radius:var(--r);border:0.5px solid rgba(26,158,92,.2)">
+          <div style="font-size:9px;font-weight:600;letter-spacing:.11em;text-transform:uppercase;color:var(--green);margin-bottom:.4rem">What only Infillion can do</div>
+          <div style="font-size:12.5px;color:var(--t2);line-height:1.7">The Nescafé→Maggi sequential halo (Action 6) is only possible through Walmart's purchase event pixel. No other DSP running Nestlé media has this signal. This is the move that proves Infillion's data advantage isn't theoretical.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+</section>
+
+<div class="divl"></div>
+
+<footer>
+  <div style="display:flex;align-items:center;gap:10px">
+    <div class="nav-brand" style="height:18px"></div>
+    <div>
+      <div style="font-size:13px;font-weight:500">Nestlé México · Brand Intelligence</div>
+      <div style="font-size:10px;color:var(--slate);margin-top:1px">Powered by Infillion · Walmart Connect · MediaMath DSP</div>
+    </div>
+  </div>
+  <div class="sim-tag"><i class="ti ti-flask" style="font-size:11px"></i> Prototype · Data simulated from real campaign structure · Pixel event architecture ready</div>
+  <div style="font-size:11px;color:var(--slate)">April 1 – May 1, 2026 · Confidential</div>
+</footer>
+
+<script>
+const D={"portfolio":{"brand":"Nestl\u00e9 M\u00e9xico","period":"April 2026","onsite_rev":2823892,"offsite_rev":1351090,"total_rev":4174982,"offline_rev_est":11689949,"blended_roas":7.2,"total_conv":30990,"total_imps":15880000,"onsite_share":68,"products":8,"active_creatives":9},"products":[{"id":"NSC","name":"Nescaf\u00e9 Cl\u00e1sico","category":"Coffee","sku":"NESC-001","onsite_conv":4821,"offsite_conv":2140,"onsite_rev":724382,"offsite_rev":187650,"imps":2850000,"clicks":48450,"ctr":1.7,"cpa":38.2,"roas":8.4,"trend":18,"status":"star"},{"id":"MAG","name":"Maggi Sazonador","category":"Cooking","sku":"MAGG-002","onsite_conv":3654,"offsite_conv":1820,"onsite_rev":438240,"offsite_rev":109200,"imps":2100000,"clicks":31500,"ctr":1.5,"cpa":42.1,"roas":7.1,"trend":9,"status":"star"},{"id":"KIT","name":"KitKat Multipack","category":"Confectionery","sku":"KITK-003","onsite_conv":2910,"offsite_conv":2480,"onsite_rev":349200,"offsite_rev":297600,"imps":3200000,"clicks":35200,"ctr":1.1,"cpa":61.3,"roas":4.8,"trend":-4,"status":"watch"},{"id":"NID","name":"Nido Crecimiento","category":"Dairy","sku":"NIDO-004","onsite_conv":2244,"offsite_conv":890,"onsite_rev":538560,"offsite_rev":213600,"imps":1620000,"clicks":27540,"ctr":1.7,"cpa":54.2,"roas":9.2,"trend":22,"status":"rising"},{"id":"NCH","name":"Nestl\u00e9 Chocolate","category":"Confectionery","sku":"NCHO-005","onsite_conv":1987,"offsite_conv":1640,"onsite_rev":218570,"offsite_rev":180400,"imps":2400000,"clicks":24000,"ctr":1.0,"cpa":71.4,"roas":3.9,"trend":-12,"status":"attention"},{"id":"NSL","name":"Nescaf\u00e9 Soluble","category":"Coffee","sku":"NESC-006","onsite_conv":1654,"offsite_conv":720,"onsite_rev":231560,"offsite_rev":100800,"imps":1280000,"clicks":17920,"ctr":1.4,"cpa":55.8,"roas":5.6,"trend":5,"status":"stable"},{"id":"MIL","name":"Milo Polvo","category":"Beverages","sku":"MILO-007","onsite_conv":1320,"offsite_conv":580,"onsite_rev":198000,"offsite_rev":87000,"imps":980000,"clicks":11760,"ctr":1.2,"cpa":68.9,"roas":5.1,"trend":3,"status":"stable"},{"id":"PUR","name":"Purina Dog Chow","category":"Pet Care","sku":"PURI-008","onsite_conv":890,"offsite_conv":1240,"onsite_rev":125380,"offsite_rev":174840,"imps":1450000,"clicks":13050,"ctr":0.9,"cpa":71.3,"roas":4.2,"trend":14,"status":"rising"}],"creatives":[{"id":"CR-001","product":"Nescaf\u00e9 Cl\u00e1sico","name":"Nescafe_300x250_MorningRitual_Price","channel":"onsite","format":"300\u00d7250","type":"jpg","angle":"Lifestyle + Price","headline":"Tu ma\u00f1ana empieza con Nescaf\u00e9","cta":"Compra ahora","has_price":true,"has_product":true,"has_lifestyle":true,"has_cta":true,"imps":980000,"clicks":18620,"ctr":1.9,"conv":1842,"cpa":32.4,"view_to_conv":0.18,"revenue":289000,"roas":9.1},{"id":"CR-002","product":"Nescaf\u00e9 Cl\u00e1sico","name":"Nescafe_728x90_BrandAwareness","channel":"offsite","format":"728\u00d790","type":"gif","angle":"Brand only","headline":"Nescaf\u00e9. El sabor de M\u00e9xico.","cta":"Descubre m\u00e1s","has_price":false,"has_product":true,"has_lifestyle":false,"has_cta":false,"imps":1240000,"clicks":11160,"ctr":0.9,"conv":820,"cpa":74.2,"view_to_conv":0.07,"revenue":81000,"roas":2.9},{"id":"CR-003","product":"Nescaf\u00e9 Cl\u00e1sico","name":"Nescafe_300x600_PromoOffer_Retail","channel":"onsite","format":"300\u00d7600","type":"gif","angle":"Promo + Retail","headline":"2x1 esta semana en Walmart","cta":"Ver oferta","has_price":true,"has_product":true,"has_lifestyle":false,"has_cta":true,"imps":630000,"clicks":17010,"ctr":2.7,"conv":2299,"cpa":24.1,"view_to_conv":0.31,"revenue":345000,"roas":12.4},{"id":"CR-004","product":"Maggi Sazonador","name":"Maggi_300x250_Recipe_CTA","channel":"onsite","format":"300\u00d7250","type":"jpg","angle":"Recipe + CTA","headline":"Dale sabor a tu platillo favorito","cta":"A\u00f1adir al carrito","has_price":false,"has_product":true,"has_lifestyle":true,"has_cta":true,"imps":1100000,"clicks":19800,"ctr":1.8,"conv":2180,"cpa":36.7,"view_to_conv":0.22,"revenue":262000,"roas":8.2},{"id":"CR-005","product":"Maggi Sazonador","name":"Maggi_300x250_Price_Pack","channel":"offsite","format":"300\u00d7250","type":"jpg","angle":"Price + Pack","headline":"Maggi desde $18.90 en Walmart","cta":"Compra ahora","has_price":true,"has_product":true,"has_lifestyle":false,"has_cta":true,"imps":1000000,"clicks":11700,"ctr":1.17,"conv":1294,"cpa":49.1,"view_to_conv":0.12,"revenue":155000,"roas":4.8},{"id":"CR-006","product":"KitKat Multipack","name":"KitKat_300x250_Break_Lifestyle","channel":"offsite","format":"300\u00d7250","type":"gif","angle":"Lifestyle","headline":"T\u00f3mate un Break con KitKat","cta":"Conoce m\u00e1s","has_price":false,"has_product":true,"has_lifestyle":true,"has_cta":false,"imps":1800000,"clicks":16200,"ctr":0.9,"conv":1440,"cpa":71.2,"view_to_conv":0.08,"revenue":172000,"roas":3.2},{"id":"CR-007","product":"KitKat Multipack","name":"KitKat_300x600_Price_Multipack","channel":"onsite","format":"300\u00d7600","type":"jpg","angle":"Price + Pack","headline":"KitKat Multipack $89 en Walmart","cta":"Agregar","has_price":true,"has_product":true,"has_lifestyle":false,"has_cta":true,"imps":1400000,"clicks":19040,"ctr":1.36,"conv":1950,"cpa":49.3,"view_to_conv":0.16,"revenue":234000,"roas":5.8},{"id":"CR-008","product":"Nido Crecimiento","name":"Nido_300x250_Family_Nutrition","channel":"onsite","format":"300\u00d7250","type":"jpg","angle":"Nutrition + Family","headline":"Nutre el crecimiento de tus hijos","cta":"Compra ahora","has_price":false,"has_product":true,"has_lifestyle":true,"has_cta":true,"imps":820000,"clicks":14760,"ctr":1.8,"conv":1540,"cpa":46.8,"view_to_conv":0.21,"revenue":369000,"roas":10.2},{"id":"CR-009","product":"Nido Crecimiento","name":"Nido_300x250_PricePromo_Walmart","channel":"onsite","format":"300\u00d7250","type":"gif","angle":"Price + Retail","headline":"Nido en oferta especial Walmart","cta":"Ver precio","has_price":true,"has_product":true,"has_lifestyle":false,"has_cta":true,"imps":800000,"clicks":12800,"ctr":1.6,"conv":1594,"cpa":45.1,"view_to_conv":0.26,"revenue":382000,"roas":12.1}],"halo":{"Nescaf\u00e9 Cl\u00e1sico":[["Maggi Sazonador",0.34,"Breakfast/meal prep pairing"],["Nescaf\u00e9 Soluble",0.28,"Coffee category expansion"],["Nestl\u00e9 Chocolate",0.19,"Sweet pairing with coffee"],["Milo Polvo",0.12,"Cross-beverage household"]],"Nido Crecimiento":[["Milo Polvo",0.42,"Child nutrition bundle"],["Maggi Sazonador",0.28,"Family meal planning"],["Nescaf\u00e9 Cl\u00e1sico",0.22,"Parent purchase alongside kids"],["Purina Dog Chow",0.11,"Family with pets household"]],"KitKat Multipack":[["Nestl\u00e9 Chocolate",0.38,"Confectionery basket"],["Nescaf\u00e9 Cl\u00e1sico",0.31,"Snack + coffee pairing"],["Milo Polvo",0.14,"Kids snack basket"],["Nido Crecimiento",0.09,"Family household"]]},"audiences":[{"segment":"Walmart Buyers \u2013 Coffee","type":"buyer","size":2840000,"conv":3210,"cpa":28.4,"roas":11.2,"share":0.31,"products":["Nescaf\u00e9 Cl\u00e1sico","Nescaf\u00e9 Soluble"]},{"segment":"Walmart Buyers \u2013 Grocery","type":"buyer","size":5120000,"conv":2840,"cpa":33.6,"roas":9.8,"share":0.27,"products":["Maggi Sazonador","Nido Crecimiento"]},{"segment":"Family Affinity","type":"affinity","size":8200000,"conv":1920,"cpa":52.1,"roas":6.1,"share":0.18,"products":["Nido Crecimiento","Milo Polvo"]},{"segment":"SiteRT \u2013 Nestl\u00e9 Pages","type":"sitert","size":420000,"conv":1640,"cpa":18.2,"roas":18.4,"share":0.16,"products":["All products"]},{"segment":"Confectionery Affinity","type":"affinity","size":3600000,"conv":820,"cpa":68.4,"roas":3.9,"share":0.08,"products":["KitKat Multipack","Nestl\u00e9 Chocolate"]}],"heatmap":[[13,8,8,13,10,9,9,28,49,56,27,35,65,59,59,27,29,29,34,104,110,117,29,33],[12,10,8,9,13,11,10,30,50,51,38,31,60,60,65,27,31,31,35,112,105,118,34,27],[11,8,12,10,13,12,10,35,51,49,26,36,62,63,60,29,27,32,30,118,115,109,31,31],[9,13,10,13,13,13,8,35,50,56,37,29,61,66,65,30,36,37,34,111,114,105,29,26],[10,11,10,8,9,12,13,31,51,55,32,36,66,61,63,28,29,37,34,112,117,116,31,29],[9,12,11,8,8,8,9,36,28,94,92,88,35,27,32,73,76,74,34,30,34,26,36,37],[8,13,12,10,13,10,8,30,32,84,89,82,37,37,30,75,69,75,27,36,30,36,34,35]],"geo":[{"state":"Ciudad de M\u00e9xico","conv":4820,"rev":578400,"roas":9.2,"cpa":34.1,"top_product":"Nescaf\u00e9 Cl\u00e1sico","lat":19.43,"lng":-99.13},{"state":"Estado de M\u00e9xico","conv":3940,"rev":472800,"roas":8.1,"cpa":38.2,"top_product":"Maggi Sazonador","lat":19.35,"lng":-99.65},{"state":"Jalisco","conv":2180,"rev":261600,"roas":7.8,"cpa":41.2,"top_product":"Nescaf\u00e9 Cl\u00e1sico","lat":20.67,"lng":-103.35},{"state":"Nuevo Le\u00f3n","conv":1840,"rev":257600,"roas":9.4,"cpa":35.8,"top_product":"Nido Crecimiento","lat":25.59,"lng":-99.99},{"state":"Puebla","conv":1420,"rev":156200,"roas":7.2,"cpa":43.1,"top_product":"Maggi Sazonador","lat":19.04,"lng":-98.21},{"state":"Veracruz","conv":980,"rev":98000,"roas":6.1,"cpa":52.4,"top_product":"Nescaf\u00e9 Cl\u00e1sico","lat":19.18,"lng":-96.14},{"state":"Guanajuato","conv":820,"rev":90200,"roas":7.0,"cpa":44.2,"top_product":"KitKat Multipack","lat":20.92,"lng":-101.15},{"state":"Quer\u00e9taro","conv":710,"rev":85200,"roas":8.2,"cpa":38.9,"top_product":"Nido Crecimiento","lat":20.59,"lng":-100.39},{"state":"Quintana Roo","conv":580,"rev":81200,"roas":9.1,"cpa":36.4,"top_product":"KitKat Multipack","lat":19.18,"lng":-88.48},{"state":"Chihuahua","conv":420,"rev":42000,"roas":5.8,"cpa":58.1,"top_product":"Purina Dog Chow","lat":28.63,"lng":-106.07},{"state":"Sonora","conv":390,"rev":46800,"roas":6.8,"cpa":47.2,"top_product":"Nescaf\u00e9 Cl\u00e1sico","lat":29.29,"lng":-110.33},{"state":"Baja California","conv":340,"rev":47600,"roas":7.4,"cpa":44.8,"top_product":"Nescaf\u00e9 Soluble","lat":30.84,"lng":-115.22}],"trend":{"Nescaf\u00e9 Cl\u00e1sico":[216,211,194,204,186,171,157,136,155,131,117,134,129,133,146,161,166,142,173,183,185,168,165,182,193,201,185,206,234,256],"Maggi Sazonador":[178,178,196,185,169,174,191,178,189,186,167,187,196,214,239,220,225,221,222,199,192,202,178,181,169,168,177,158,162,171],"KitKat Multipack":[183,193,194,168,162,142,127,144,125,144,166,166,176,158,162,176,159,133,111,84,66,68,83,107,105,82,80,92,69,50],"Nido Crecimiento":[121,104,111,115,106,121,129,124,110,106,117,116,133,141,132,137,150,136,127,119,127,117,106,96,88,88,82,76,84,76],"Nestl\u00e9 Chocolate":[150,162,160,168,159,153,137,137,126,146,128,137,133,110,125,105,104,94,96,99,97,100,102,105,106,117,100,88,68,69]}};
+
+// ── COLOUR HELPERS ────────────────────────────────────────────────────────
+const G1='#9920E7',G2='#E0309A',G3='#FC5D3D',GOLD='#D4880A',BLUE='#1D7AB5',GREEN='#1A9E5C',SLATE='#7A7280';
+const PROD_COLORS={'Nescafé Clásico':G1,'Maggi Sazonador':G2,'KitKat Multipack':G3,'Nido Crecimiento':GREEN,'Nestlé Chocolate':GOLD,'Nescafé Soluble':BLUE,'Milo Polvo':'#9B59B6','Purina Dog Chow':'#2ECC71'};
+const STATUS_BADGE={'star':'<span class="badge b-star">⭐ Star</span>','rising':'<span class="badge b-rising">🚀 Rising</span>','watch':'<span class="badge b-watch">👁 Watch</span>','attention':'<span class="badge b-attn">⚠ Needs attention</span>','stable':'<span class="badge b-stable">Stable</span>'};
+const DAYS=['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+let C={};
+function destroy(id){if(C[id]){C[id].destroy();delete C[id];}}
+
+// ── TREND CHART ────────────────────────────────────────────────────────────
+let trendFocus=null;
+function drawTrend(){
+  const labels=Array.from({length:30},(_,i)=>`Apr ${i+1}`);
+  const products=Object.keys(D.trend);
+  const datasets=products.map(p=>({
+    label:p,data:D.trend[p],
+    borderColor:PROD_COLORS[p]||SLATE,
+    backgroundColor:PROD_COLORS[p]?(PROD_COLORS[p]+'18'):'transparent',
+    tension:.4,borderWidth:trendFocus&&trendFocus!==p?1:2,
+    pointRadius:0,pointHoverRadius:5,
+    fill:trendFocus===p,
+    borderDash:trendFocus&&trendFocus!==p?[4,3]:[],
+    borderOpacity:trendFocus&&trendFocus!==p?0.3:1,
+  }));
+  destroy('trend-chart');
+  C['trend-chart']=new Chart(document.getElementById('trend-chart'),{
+    type:'line',data:{labels,datasets},
+    options:{
+      responsive:true,maintainAspectRatio:false,
+      animation:{duration:600,easing:'easeInOutQuart'},
+      interaction:{mode:'index',intersect:false},
+      plugins:{
+        legend:{
+          labels:{font:{size:9},boxWidth:12,color:SLATE,padding:10},
+          onClick:(e,item)=>{
+            const lbl=item.text;
+            trendFocus=(trendFocus===lbl?null:lbl);
+            drawTrend();
+          }
+        },
+        tooltip:{
+          backgroundColor:'rgba(255,255,255,.97)',borderColor:'rgba(26,26,26,.1)',borderWidth:1,
+          titleColor:'#1A1A1A',bodyColor:'#7A7280',
+          callbacks:{label:c=>' '+c.dataset.label+': '+c.raw+' conv'}
+        }
+      },
+      scales:{
+        x:{grid:{display:false},ticks:{color:SLATE,font:{size:8},maxTicksLimit:8}},
+        y:{grid:{color:'rgba(26,26,26,.05)'},ticks:{color:SLATE,font:{size:8}}}
+      }
+    }
+  });
+}
+
+// ── PRODUCT TABLE ──────────────────────────────────────────────────────────
+let pSortKey='conv',pSortDir=-1;
+function sortProd(key,th){
+  if(pSortKey===key)pSortDir*=-1;else{pSortKey=key;pSortDir=-1;}
+  document.querySelectorAll('.ptbl th').forEach(t=>t.classList.remove('srt-d','srt-a'));
+  if(th)th.classList.add(pSortDir===-1?'srt-d':'srt-a');
+  renderProd();
+}
+function renderProd(){
+  const maxConv=Math.max(...D.products.map(p=>p.onsite_conv+p.offsite_conv));
+  const sorted=[...D.products].sort((a,b)=>{
+    const av=pSortKey==='conv'?a.onsite_conv+a.offsite_conv:a[pSortKey];
+    const bv=pSortKey==='conv'?b.onsite_conv+b.offsite_conv:b[pSortKey];
+    if(typeof av==='string')return pSortDir*av.localeCompare(bv);
+    return pSortDir*(bv-av);
+  });
+  const totalConv=D.products.reduce((s,p)=>s+p.onsite_conv+p.offsite_conv,0);
+  document.getElementById('prod-tbody').innerHTML=sorted.map(p=>{
+    const conv=p.onsite_conv+p.offsite_conv;
+    const onPct=Math.round(p.onsite_conv/conv*100);
+    const share=(conv/totalConv*100).toFixed(1);
+    const trendCls=p.trend>0?'up':'dn';
+    const trendIco=p.trend>0?'↑':'↓';
+    return `<tr>
+      <td><strong style="color:${PROD_COLORS[p.name]||SLATE}">${p.name}</strong></td>
+      <td style="color:${SLATE};font-size:11px">${p.category}</td>
+      <td>${STATUS_BADGE[p.status]||''}</td>
+      <td><strong style="color:var(--text)">${conv.toLocaleString()}</strong></td>
+      <td>
+        <div style="font-size:10px;color:var(--slate);margin-bottom:2px">${onPct}% on · ${100-onPct}% off</div>
+        <div class="channel-split" style="margin:0">
+          <div class="ch-on" style="width:${onPct}%"></div>
+          <div class="ch-off" style="width:${100-onPct}%"></div>
+        </div>
+      </td>
+      <td style="color:${p.roas>=8?GREEN:p.roas>=6?GOLD:'#E85C4A'};font-weight:600">${p.roas}×</td>
+      <td style="color:${p.cpa<45?GREEN:p.cpa<65?GOLD:'#E85C4A'}">$${p.cpa}</td>
+      <td>${p.ctr.toFixed(2)}%</td>
+      <td><span class="kpi-trend ${trendCls}" style="padding:1px 6px">${trendIco} ${Math.abs(p.trend)}%</span></td>
+      <td>
+        <div style="font-size:11px;color:var(--t2);margin-bottom:2px">${share}%</div>
+        <div class="minibar"><div class="minibar-fill" style="width:${share}%;background:${PROD_COLORS[p.name]||SLATE}"></div></div>
+      </td>
+    </tr>`;
+  }).join('');
+}
+
+// ── CREATIVE PODIUM ────────────────────────────────────────────────────────
+let podSortKey='conv';
+function sortPodium(key,btn){
+  podSortKey=key;
+  document.querySelectorAll('.fp[onclick*="sortPodium"]').forEach(b=>b.classList.remove('on'));
+  btn.classList.add('on');
+  renderPodium();
+}
+function renderPodium(){
+  const sorted=[...D.creatives].sort((a,b)=>b[podSortKey]-a[podSortKey]);
+  const top3=sorted.slice(0,3);
+  const rankLabels=['🥇','🥈','🥉'];
+  const rankClass=['r1','r2','r3'];
+  const metricLabel={conv:'Conversions',ctr:'CTR',view_to_conv:'View→Conv',roas:'ROAS'};
+  document.getElementById('podium-wrap').innerHTML=top3.map((cr,i)=>{
+    const isFirst=i===0;
+    return `<div class="pod-card${isFirst?' gold-border':''}">
+      ${isFirst?'<div class="pod-tag">Winner</div>':''}
+      <div class="pod-rank ${rankClass[i]}">${rankLabels[i]}</div>
+      <div class="pod-name" title="${cr.name}">${cr.name.replace(/_/g,' ')}</div>
+      <div class="pod-product" style="color:${PROD_COLORS[cr.product]||SLATE}">${cr.product} · ${cr.channel}</div>
+      <div style="font-size:10px;color:var(--slate);margin-bottom:.6rem;font-style:italic">"${cr.headline}"</div>
+      <div class="pod-metrics">
+        <div class="pod-met"><div class="pod-met-v" style="color:var(--g1)">${cr.conv.toLocaleString()}</div><div class="pod-met-l">Conv.</div></div>
+        <div class="pod-met"><div class="pod-met-v">${cr.ctr}%</div><div class="pod-met-l">CTR</div></div>
+        <div class="pod-met"><div class="pod-met-v" style="color:${cr.roas>=10?GREEN:GOLD}">${cr.roas}×</div><div class="pod-met-l">ROAS</div></div>
+      </div>
+      <div style="margin-top:.6rem;font-size:10px;color:var(--slate)">View→Conv: ${(cr.view_to_conv*100).toFixed(0)}% · $${cr.cpa} CPA</div>
+    </div>`;
+  }).join('');
+
+  // Full table
+  document.getElementById('creative-tbody').innerHTML=sorted.map((cr,i)=>{
+    const chanCol=cr.channel==='onsite'?G1:G2;
+    return `<tr>
+      <td style="font-weight:700;color:${i<3?G1:SLATE}">#${i+1}</td>
+      <td style="font-size:11px" title="${cr.name}"><strong style="color:var(--text)">${cr.name.replace(/_/g,' ')}</strong></td>
+      <td style="color:${PROD_COLORS[cr.product]||SLATE};font-size:11px">${cr.product}</td>
+      <td><span style="padding:2px 7px;border-radius:6px;font-size:9px;font-weight:600;background:${cr.channel==='onsite'?'rgba(153,32,231,.1)':'rgba(224,48,154,.1)'};color:${chanCol}">${cr.channel}</span></td>
+      <td style="font-family:var(--fm);font-size:10px">${cr.format}</td>
+      <td style="font-size:10px;color:var(--t2)">${cr.angle}</td>
+      <td style="color:${cr.ctr>=1.5?GREEN:cr.ctr>=1.0?GOLD:'#E85C4A'};font-weight:600">${cr.ctr}%</td>
+      <td><strong>${cr.conv.toLocaleString()}</strong></td>
+      <td style="color:${cr.view_to_conv>=0.25?GREEN:cr.view_to_conv>=0.15?GOLD:SLATE}">${(cr.view_to_conv*100).toFixed(0)}%</td>
+      <td style="color:${cr.cpa<35?GREEN:cr.cpa<55?GOLD:'#E85C4A'}">$${cr.cpa}</td>
+      <td style="color:${cr.roas>=10?GREEN:cr.roas>=6?GOLD:'#E85C4A'};font-weight:600">${cr.roas}×</td>
+    </tr>`;
+  }).join('');
+}
+
+// ── HALO EFFECT ────────────────────────────────────────────────────────────
+function showHalo(product, btn){
+  document.querySelectorAll('[onclick*="showHalo"]').forEach(b=>b.classList.remove('on'));
+  btn.classList.add('on');
+  const items=D.halo[product]||[];
+  document.getElementById('halo-title').textContent=`When a shopper buys ${product}, they also buy...`;
+  document.getElementById('halo-grid').innerHTML=items.map(([name,pct,reason])=>`
+    <div class="halo-row">
+      <div class="halo-name" style="color:${PROD_COLORS[name]||SLATE}">${name}</div>
+      <div class="halo-pct-bar"><div class="halo-pct-fill" style="width:${pct*100}%"></div></div>
+      <div class="halo-pct">${(pct*100).toFixed(0)}%</div>
+      <div class="halo-reason">${reason}</div>
+    </div>`).join('');
+  const topItem=items[0];
+  document.getElementById('halo-insight').innerHTML=`<strong>Key halo signal:</strong> ${(topItem[1]*100).toFixed(0)}% of ${product} buyers also purchase <strong>${topItem[0]}</strong> in the same session — ${topItem[2]}. This is a sequential targeting opportunity available only through Walmart's purchase event pixel.`;
+}
+
+// ── AUDIENCE CHARTS ────────────────────────────────────────────────────────
+function buildAudience(){
+  const maxConv=Math.max(...D.audiences.map(a=>a.conv));
+  document.getElementById('aud-grid').innerHTML=D.audiences.map(a=>{
+    const typeCls={'buyer':'aud-buyer','affinity':'aud-affinity','sitert':'aud-sitert'}[a.type]||'';
+    const barColor={'buyer':G1,'affinity':BLUE,'sitert':GREEN}[a.type]||SLATE;
+    return `<div class="aud-row">
+      <div>
+        <div class="aud-name">${a.segment}</div>
+        <div class="aud-type ${typeCls}">${a.type}</div>
+      </div>
+      <div><div class="aud-bar-wrap"><div class="aud-bar-fill" style="width:${(a.conv/maxConv*100).toFixed(0)}%;background:${barColor}"></div></div></div>
+      <div style="text-align:right"><div style="font-size:13px;font-weight:600;color:${barColor}">${a.conv.toLocaleString()}</div><div style="font-size:9px;color:var(--slate)">conv</div></div>
+      <div style="text-align:right"><div style="font-size:12px;font-weight:600;color:var(--text)">$${a.cpa}</div><div style="font-size:9px;color:var(--slate)">CPA</div></div>
+      <div style="text-align:right"><div style="font-size:12px;font-weight:600;color:${a.roas>=10?GREEN:a.roas>=7?GOLD:SLATE}">${a.roas}×</div><div style="font-size:9px;color:var(--slate)">ROAS</div></div>
+    </div>`;
+  }).join('');
+
+  // Pie chart — interactive with hover highlight
+  destroy('aud-chart');
+  C['aud-chart']=new Chart(document.getElementById('aud-chart'),{
+    type:'doughnut',
+    data:{
+      labels:D.audiences.map(a=>a.segment.split('–')[0].trim()),
+      datasets:[{
+        data:D.audiences.map(a=>a.conv),
+        backgroundColor:[G1,G2,BLUE,GREEN,GOLD],
+        borderWidth:2,borderColor:'#fff',
+        hoverOffset:12,
+      }]
+    },
+    options:{
+      responsive:true,maintainAspectRatio:false,cutout:'62%',
+      animation:{animateScale:true,duration:700,easing:'easeInOutQuart'},
+      plugins:{
+        legend:{position:'right',labels:{font:{size:9},boxWidth:10,color:SLATE,padding:8}},
+        tooltip:{
+          backgroundColor:'rgba(255,255,255,.97)',borderColor:'rgba(26,26,26,.1)',borderWidth:1,
+          titleColor:'#1A1A1A',bodyColor:'#7A7280',
+          callbacks:{
+            label:c=>{
+              const pct=((c.raw/D.audiences.reduce((s,a)=>s+a.conv,0))*100).toFixed(1);
+              return ` ${c.raw.toLocaleString()} conv (${pct}%)`;
+            }
+          }
+        }
+      }
+    }
+  });
+
+  // CPA bar chart — with ROAS annotation
+  destroy('aud-cpa-chart');
+  C['aud-cpa-chart']=new Chart(document.getElementById('aud-cpa-chart'),{
+    type:'bar',
+    data:{
+      labels:D.audiences.map(a=>a.segment.split('–')[0].trim().split(' ').slice(0,2).join(' ')),
+      datasets:[
+        {label:'CPA ($)',data:D.audiences.map(a=>a.cpa),
+         backgroundColor:[G1+'77',G2+'77',BLUE+'77',GREEN+'77',GOLD+'77'],
+         borderColor:[G1,G2,BLUE,GREEN,GOLD],borderWidth:1.5,borderRadius:5,yAxisID:'y'},
+        {label:'ROAS',data:D.audiences.map(a=>a.roas),type:'line',
+         borderColor:'rgba(26,26,26,.3)',backgroundColor:'transparent',
+         borderDash:[4,3],pointBackgroundColor:[G1,G2,BLUE,GREEN,GOLD],
+         pointRadius:4,borderWidth:1.5,tension:.3,yAxisID:'y2'},
+      ]
+    },
+    options:{
+      responsive:true,maintainAspectRatio:false,
+      animation:{duration:600,easing:'easeInOutQuart'},
+      interaction:{mode:'index',intersect:false},
+      plugins:{
+        legend:{labels:{font:{size:9},boxWidth:10,color:SLATE,padding:8}},
+        tooltip:{
+          backgroundColor:'rgba(255,255,255,.97)',borderColor:'rgba(26,26,26,.1)',borderWidth:1,
+          titleColor:'#1A1A1A',bodyColor:'#7A7280',
+          callbacks:{
+            label:c=>c.datasetIndex===0?' $'+c.raw+' CPA':' '+c.raw+'× ROAS'
+          }
+        }
+      },
+      scales:{
+        x:{grid:{display:false},ticks:{color:SLATE,font:{size:8}}},
+        y:{grid:{color:'rgba(26,26,26,.05)'},ticks:{color:SLATE,font:{size:8},callback:v=>'$'+v},position:'left'},
+        y2:{position:'right',grid:{display:false},ticks:{color:SLATE,font:{size:8},callback:v=>v+'×'}}
+      }
+    }
+  });
+}
+
+// ── HEATMAP ────────────────────────────────────────────────────────────────
+function buildHeatmap(){
+  const maxVal=Math.max(...D.heatmap.flat());
+  const grid=document.getElementById('heatmap');
+  // Hour headers
+  const headerRow=document.createElement('div');headerRow.className='hm-label';
+  headerRow.style.gridColumn='1';headerRow.style.gridRow='1';
+  headerRow.textContent='';grid.appendChild(headerRow);
+  for(let h=0;h<24;h++){
+    const cell=document.createElement('div');cell.className='hm-hour';
+    cell.textContent=h===0?'12am':h===12?'12pm':h<12?h+'am':(h-12)+'pm';
+    grid.appendChild(cell);
+  }
+  // Data rows
+  DAYS.forEach((day,di)=>{
+    const lbl=document.createElement('div');lbl.className='hm-label';
+    lbl.style.paddingRight='8px';lbl.textContent=day;grid.appendChild(lbl);
+    for(let h=0;h<24;h++){
+      const v=D.heatmap[di][h];
+      const t=v/maxVal;
+      const alpha=0.08+t*0.75;
+      const cell=document.createElement('div');cell.className='hm-cell';
+      cell.style.background=`rgba(153,32,231,${alpha.toFixed(2)})`;
+      cell.title=`${day} ${h}:00 — ${v} conversions`;
+      grid.appendChild(cell);
+    }
+  });
+}
+
+// ── GEO TABLE + CHART ──────────────────────────────────────────────────────
+let gSortKey='conv',gSortDir=-1;
+function sortGeo(key,th){
+  if(gSortKey===key)gSortDir*=-1;else{gSortKey=key;gSortDir=-1;}
+  document.querySelectorAll('#geo-tbl th').forEach(t=>t.classList.remove('srt-d','srt-a'));
+  if(th)th.classList.add(gSortDir===-1?'srt-d':'srt-a');
+  renderGeo();
+}
+function renderGeo(){
+  const maxConv=Math.max(...D.geo.map(g=>g.conv));
+  const sorted=[...D.geo].sort((a,b)=>{
+    const av=a[gSortKey],bv=b[gSortKey];
+    if(typeof av==='string')return gSortDir*av.localeCompare(bv);
+    return gSortDir*(bv-av);
+  });
+  document.getElementById('geo-tbody').innerHTML=sorted.map(g=>{
+    const col=g.roas>=9?GREEN:g.roas>=7?G1:g.roas>=5?GOLD:SLATE;
+    return `<tr>
+      <td><span class="geo-flag" style="background:${col}"></span><strong>${g.state}</strong></td>
+      <td><strong>${g.conv.toLocaleString()}</strong>
+        <div class="minibar"><div class="minibar-fill" style="width:${(g.conv/maxConv*100).toFixed(0)}%;background:${col}"></div></div>
+      </td>
+      <td>$${(g.rev/1000).toFixed(0)}k</td>
+      <td style="color:${col};font-weight:600">${g.roas}×</td>
+      <td style="color:${g.cpa<40?GREEN:g.cpa<55?GOLD:'#E85C4A'}">$${g.cpa}</td>
+      <td style="color:${PROD_COLORS[g.top_product]||SLATE};font-size:11px">${g.top_product}</td>
+    </tr>`;
+  }).join('');
+}
+
+function buildGeoChart(){
+  const top6=[...D.geo].sort((a,b)=>b.rev-a.rev).slice(0,6);
+  const roasColors=top6.map(g=>g.roas>=9?GREEN:g.roas>=7?G1:GOLD);
+  destroy('geo-chart');
+  C['geo-chart']=new Chart(document.getElementById('geo-chart'),{
+    type:'bar',
+    data:{
+      labels:top6.map(g=>g.state.replace('Ciudad de México','CDMX').replace('Estado de México','Edo. Méx.')),
+      datasets:[
+        {label:'Revenue (MXN)',data:top6.map(g=>g.rev),
+         backgroundColor:roasColors.map(c=>c+'88'),borderColor:roasColors,
+         borderWidth:1.5,borderRadius:5,yAxisID:'y'},
+        {label:'ROAS',data:top6.map(g=>g.roas),type:'line',
+         borderColor:'rgba(26,26,26,.25)',backgroundColor:'transparent',
+         borderDash:[4,3],pointBackgroundColor:roasColors,
+         pointRadius:5,borderWidth:1.5,tension:.3,yAxisID:'y2'},
+      ]
+    },
+    options:{
+      responsive:true,maintainAspectRatio:false,
+      animation:{duration:700,easing:'easeInOutQuart'},
+      interaction:{mode:'index',intersect:false},
+      plugins:{
+        legend:{labels:{font:{size:9},boxWidth:10,color:SLATE,padding:8}},
+        tooltip:{
+          backgroundColor:'rgba(255,255,255,.97)',borderColor:'rgba(26,26,26,.1)',borderWidth:1,
+          titleColor:'#1A1A1A',bodyColor:'#7A7280',
+          callbacks:{
+            label:c=>c.datasetIndex===0?' $'+(c.raw/1000).toFixed(0)+'k revenue':' '+c.raw+'× ROAS'
+          }
+        }
+      },
+      scales:{
+        x:{grid:{display:false},ticks:{color:SLATE,font:{size:9}}},
+        y:{grid:{color:'rgba(26,26,26,.05)'},ticks:{color:SLATE,font:{size:9},callback:v=>'$'+(v/1000).toFixed(0)+'k'},position:'left'},
+        y2:{position:'right',grid:{display:false},ticks:{color:SLATE,font:{size:9},callback:v=>v+'×'},min:0,max:12}
+      }
+    }
+  });
+}
+
+// ── NAV SCROLL ─────────────────────────────────────────────────────────────
+window.addEventListener('scroll',()=>{
+  let cur='portfolio';
+  document.querySelectorAll('section[id]').forEach(s=>{if(window.scrollY>=s.offsetTop-80)cur=s.id;});
+  document.querySelectorAll('.nav-links a').forEach(a=>a.classList.toggle('act',a.getAttribute('href')==='#'+cur));
+});
+
+// Scroll reveals
+const obs=new IntersectionObserver(e=>e.forEach(x=>{
+  if(x.isIntersecting){x.target.style.opacity='1';x.target.style.transform='none';}
+}),{threshold:.06});
+document.querySelectorAll('section').forEach(s=>{
+  s.style.opacity='0';s.style.transform='translateY(16px)';
+  s.style.transition='opacity .55s,transform .55s';
+  obs.observe(s);
+});
+
+
+// ── LEAFLET MAP ───────────────────────────────────────────────────────────
+let _map=null,_gjLayer=null,_bubbleLayer=null;
+let mapMode='conv';
+
+const NAME_MAP={
+  'Aguascalientes':'Aguascalientes','Baja California':'Baja California',
+  'Baja California Sur':'Baja California Sur','Campeche':'Campeche',
+  'Chiapas':'Chiapas','Chihuahua':'Chihuahua','Ciudad de México':'Ciudad de México',
+  'Coahuila de Zaragoza':'Coahuila','Colima':'Colima','Durango':'Durango',
+  'México':'Estado de México','Guanajuato':'Guanajuato','Guerrero':'Guerrero',
+  'Hidalgo':'Hidalgo','Jalisco':'Jalisco','Michoacán de Ocampo':'Michoacán',
+  'Morelos':'Morelos','Nayarit':'Nayarit','Nuevo León':'Nuevo León',
+  'Oaxaca':'Oaxaca','Puebla':'Puebla','Querétaro':'Querétaro',
+  'Quintana Roo':'Quintana Roo','San Luis Potosí':'San Luis Potosí',
+  'Sinaloa':'Sinaloa','Sonora':'Sonora','Tabasco':'Tabasco',
+  'Tamaulipas':'Tamaulipas','Tlaxcala':'Tlaxcala',
+  'Veracruz de Ignacio de la Llave':'Veracruz','Yucatán':'Yucatán',
+  'Zacatecas':'Zacatecas',
+};
+
+function getGeoVal(d){ return mapMode==='conv'?d.conv:mapMode==='roas'?d.roas:d.rev/1000; }
+function getGeoColor(v,lo,hi){
+  const t=(v-lo)/(hi-lo||1);
+  if(mapMode==='roas') return d3.interpolateRgb('rgba(153,32,231,.15)','rgba(26,158,92,.75)')(t);
+  if(mapMode==='rev')  return d3.interpolateRgb('rgba(29,122,181,.15)','rgba(29,122,181,.75)')(t);
+  return d3.interpolateRgb('rgba(153,32,231,.15)','rgba(153,32,231,.75)')(t);
+}
+
+function drawMap(){
+  const geoMap=Object.fromEntries(D.geo.map(d=>[d.state,d]));
+  const vals=D.geo.map(d=>getGeoVal(d));
+  const lo=Math.min(...vals),hi=Math.max(...vals);
+
+  if(!_map){
+    _map=L.map('map-leaflet',{center:[23.5,-102.5],zoom:5,zoomControl:true,attributionControl:false});
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:10,minZoom:4}).addTo(_map);
+    L.control.attribution({prefix:'<span style="font-size:9px;color:rgba(26,26,26,.3)">© OpenStreetMap · Infillion</span>'}).addTo(_map);
+  }
+  if(_gjLayer){_map.removeLayer(_gjLayer);_gjLayer=null;}
+  if(_bubbleLayer){_map.removeLayer(_bubbleLayer);_bubbleLayer=null;}
+
+  fetch('https://raw.githubusercontent.com/angelnmara/geojson/master/mexicoHigh.json')
+    .then(r=>r.json())
+    .then(geo=>{
+      _gjLayer=L.geoJSON(geo,{
+        style:feature=>{
+          const fname=feature.properties.name||feature.properties.NAME||'';
+          const oname=NAME_MAP[fname]||fname;
+          const d=geoMap[oname];
+          return{
+            fillColor:d?getGeoColor(getGeoVal(d),lo,hi):'rgba(153,32,231,.04)',
+            fillOpacity:.72,color:'rgba(255,255,255,.85)',weight:1.0,
+          };
+        },
+        onEachFeature:(feature,layer)=>{
+          const fname=feature.properties.name||feature.properties.NAME||'';
+          const oname=NAME_MAP[fname]||fname;
+          const d=geoMap[oname];
+          if(!d)return;
+          const rasCo=d.roas>=9?'#1A9E5C':d.roas>=7?'#9920E7':'#D4880A';
+          layer.bindTooltip(
+            `<span class="tt-name">${d.state}</span>`+
+            `<div class="tt-row"><span class="tt-k">Conversions</span><span class="tt-v">${d.conv.toLocaleString()}</span></div>`+
+            `<div class="tt-row"><span class="tt-k">Revenue</span><span class="tt-v">$${(d.rev/1000).toFixed(0)}k</span></div>`+
+            `<div class="tt-row"><span class="tt-k">ROAS</span><span class="tt-v" style="color:${rasCo}">${d.roas}×</span></div>`+
+            `<div class="tt-row"><span class="tt-k">CPA</span><span class="tt-v">$${d.cpa}</span></div>`+
+            `<div class="tt-row"><span class="tt-k">Top product</span><span class="tt-v">${d.top_product}</span></div>`,
+            {sticky:true,opacity:1}
+          );
+          layer.on({
+            mouseover(e){e.target.setStyle({fillOpacity:.95,weight:2.5,color:'rgba(153,32,231,.7)'}); },
+            mouseout(e){_gjLayer.resetStyle(e.target);}
+          });
+        }
+      }).addTo(_map);
+
+      // Bubble layer — sized by conversions, coloured by ROAS
+      const maxConv=Math.max(...D.geo.map(d=>d.conv));
+      const bubbles=D.geo.filter(d=>d.lat).map(d=>{
+        const r=Math.max(6,Math.round(6+(d.conv/maxConv)*24));
+        const col=d.roas>=9?'#1A9E5C':d.roas>=7?'#9920E7':'#D4880A';
+        const circ=L.circleMarker([d.lat,d.lng],{radius:r,fillColor:col,fillOpacity:.85,color:'rgba(255,255,255,.9)',weight:1.5});
+        const rasCo=d.roas>=9?'#1A9E5C':d.roas>=7?'#9920E7':'#D4880A';
+        circ.bindTooltip(
+          `<span class="tt-name">${d.state}</span>`+
+          `<div class="tt-row"><span class="tt-k">Conversions</span><span class="tt-v">${d.conv.toLocaleString()}</span></div>`+
+          `<div class="tt-row"><span class="tt-k">ROAS</span><span class="tt-v" style="color:${rasCo}">${d.roas}×</span></div>`+
+          `<div class="tt-row"><span class="tt-k">CPA</span><span class="tt-v">$${d.cpa}</span></div>`+
+          `<div class="tt-row"><span class="tt-k">Top product</span><span class="tt-v">${d.top_product}</span></div>`,
+          {sticky:true,opacity:1}
+        );
+        circ.on('mouseover',function(){this.setStyle({fillOpacity:1,weight:2.8});});
+        circ.on('mouseout', function(){this.setStyle({fillOpacity:.85,weight:1.5});});
+        return circ;
+      });
+      _bubbleLayer=L.layerGroup(bubbles).addTo(_map);
+
+      // Update legend
+      updateMapLegend(lo,hi);
+    })
+    .catch(()=>{
+      // Fallback: bubbles only
+      const maxConv=Math.max(...D.geo.map(d=>d.conv));
+      const bubbles=D.geo.filter(d=>d.lat).map(d=>{
+        const r=Math.max(6,Math.round(6+(d.conv/maxConv)*24));
+        const col=d.roas>=9?'#1A9E5C':d.roas>=7?'#9920E7':'#D4880A';
+        return L.circleMarker([d.lat,d.lng],{radius:r,fillColor:col,fillOpacity:.85,color:'rgba(255,255,255,.9)',weight:1.5});
+      });
+      _bubbleLayer=L.layerGroup(bubbles).addTo(_map);
+    });
+}
+
+function updateMapLegend(lo,hi){
+  const lc=document.getElementById('map-leg-c');
+  if(!lc)return;
+  const ctx=lc.getContext('2d');
+  const gr=ctx.createLinearGradient(0,0,120,0);
+  if(mapMode==='roas'){gr.addColorStop(0,'rgba(153,32,231,.25)');gr.addColorStop(1,'#1A9E5C');}
+  else if(mapMode==='rev'){gr.addColorStop(0,'rgba(29,122,181,.25)');gr.addColorStop(1,'#1D7AB5');}
+  else{gr.addColorStop(0,'rgba(153,32,231,.2)');gr.addColorStop(1,'#9920E7');}
+  ctx.fillStyle=gr;ctx.fillRect(0,0,120,6);
+  const fmt=v=>mapMode==='conv'?v.toLocaleString()+' conv':mapMode==='roas'?v.toFixed(1)+'×':'$'+v.toFixed(0)+'k';
+  const el=document.getElementById('map-leg-lo');if(el)el.textContent=fmt(lo);
+  const eh=document.getElementById('map-leg-hi');if(eh)eh.textContent=fmt(hi);
+}
+
+function setMapMode(m,btn){
+  mapMode=m;
+  document.querySelectorAll('.map-fp').forEach(b=>b.classList.remove('on'));
+  if(btn)btn.classList.add('on');
+  if(_gjLayer&&_map){
+    const geoMap=Object.fromEntries(D.geo.map(d=>[d.state,d]));
+    const vals=D.geo.map(d=>getGeoVal(d));
+    const lo=Math.min(...vals),hi=Math.max(...vals);
+    _gjLayer.setStyle(feature=>{
+      const fname=feature.properties.name||feature.properties.NAME||'';
+      const oname=NAME_MAP[fname]||fname;
+      const d=geoMap[oname];
+      return{fillColor:d?getGeoColor(getGeoVal(d),lo,hi):'rgba(153,32,231,.04)',fillOpacity:.72,color:'rgba(255,255,255,.85)',weight:1.0};
+    });
+    updateMapLegend(lo,hi);
+  }
+}
+
+
+// ── MAY PLAYBOOK ──────────────────────────────────────────────────────────
+const PB={"month":"May 2026","total_budget_shift_pct":0,"summary":"Six moves. Same budget. Projected +24% conversion uplift.","actions":[{"id":"A1","type":"scale","priority":1,"product":"Nescaf\u00e9 Cl\u00e1sico","title":"Scale Nescaf\u00e9 \u2014 shift CR-003 budget up 40%","signal":"CR-003 (300\u00d7600 Promo + Retail) achieved 12.4\u00d7 ROAS and 2,299 conversions at $24 CPA in April \u2014 the highest ROAS creative in the portfolio. It received only 22% of Nescaf\u00e9's impression budget.","action":"Increase CR-003 budget from 22% to 45% of Nescaf\u00e9 allocation. Pause CR-002 (Brand Awareness offsite, 2.9\u00d7 ROAS). Redirect $85k MXN from CR-002 to CR-003.","outcome":"+1,240 estimated incremental conversions. Portfolio CPA improves from $42 to $36.","budget_from":85000,"budget_to":85000,"budget_label":"$85k MXN reallocated","conv_delta":1240,"cpa_before":38.2,"cpa_after":31.5,"color":"#9920E7"},{"id":"A2","type":"scale","priority":2,"product":"Nido Crecimiento","title":"Nido is your fastest riser \u2014 double down now","signal":"+22% MoM growth, 9.2\u00d7 ROAS, and both creatives (CR-008 and CR-009) performing above 1.6% CTR. Saturday 9\u201311am is Nido's peak conversion window \u2014 currently receiving standard weekday pacing.","action":"Increase Nido total budget by $60k MXN (funded from Nestl\u00e9 Chocolate reallocation). Apply weekend daypart uplift: +40% bid modifier Saturday 8am\u201312pm. Add Quer\u00e9taro and Nuevo Le\u00f3n as priority geo targets.","outcome":"+680 estimated incremental conversions. Nido becomes #2 product by volume in May.","budget_from":60000,"budget_to":60000,"budget_label":"+$60k MXN from reallocation","conv_delta":680,"cpa_before":54.2,"cpa_after":46.8,"color":"#1A9E5C"},{"id":"A3","type":"reset","priority":3,"product":"Nestl\u00e9 Chocolate","title":"Reset Nestl\u00e9 Chocolate \u2014 brief mismatch, not audience mismatch","signal":"-12% MoM, 3.9\u00d7 ROAS, 0.60% CTR. CR-001 (lifestyle only, no price, no CTA) is the common factor. Confectionery Affinity audience converts at $68 CPA. But Onsite buyers purchasing adjacent products (KitKat halo: 38% cross-buy) suggest the audience intent is there \u2014 the creative is not matching it.","action":"Pause CR-001. Brief new creative: product shot + price callout + 'A\u00f1adir al carrito' CTA, onsite format, 300\u00d7250 and 300\u00d7600. Shift 60% of budget to Onsite while new creative is in production. Target KitKat buyers via halo retargeting.","outcome":"Estimated recovery to 5.8\u00d7 ROAS within 3 weeks of new creative launch. $45k MXN spend preserved rather than cut.","budget_from":45000,"budget_to":45000,"budget_label":"$45k MXN redirected onsite","conv_delta":420,"cpa_before":71.4,"cpa_after":52.0,"color":"#D4880A"},{"id":"A4","type":"unlock","priority":4,"product":"SiteRT \u2013 All Nestl\u00e9","title":"SiteRT is your most under-invested audience","signal":"420k users, $18 CPA, 18.4\u00d7 ROAS. SiteRT delivered 1,640 conversions in April from the smallest audience in the portfolio \u2014 at 61% lower CPA than the next best segment. Budget allocation: <8% of total.","action":"Increase SiteRT budget from <8% to 18% of total portfolio allocation (+$95k MXN). Expand SiteRT audience window from 7 days to 14 days. Apply SiteRT targeting across all 8 products, not just Nescaf\u00e9.","outcome":"+920 estimated incremental conversions at $18 CPA. Single highest-ROI budget move available.","budget_from":0,"budget_to":95000,"budget_label":"+$95k MXN to SiteRT","conv_delta":920,"cpa_before":18.2,"cpa_after":18.2,"color":"#1D7AB5"},{"id":"A5","type":"geo","priority":5,"product":"Nuevo Le\u00f3n + Quer\u00e9taro","title":"Two states are over-delivering \u2014 they're under-funded","signal":"Nuevo Le\u00f3n: 8.2\u00d7 ROAS, $38.90 CPA, 12% of national budget. Quer\u00e9taro: 8.2\u00d7 ROAS, $38.90 CPA \u2014 both outperforming CDMX (9.2\u00d7 ROAS but at near-saturation volume). Meanwhile Chihuahua runs at 5.8\u00d7 ROAS with proportional funding.","action":"Shift $70k MXN from Chihuahua and Veracruz (both below 6.5\u00d7 ROAS) to Nuevo Le\u00f3n and Quer\u00e9taro. Apply geo bid modifiers: +25% in NL, +20% in QRO. Prioritise Nido and Nescaf\u00e9 in these markets based on local top-product data.","outcome":"+480 estimated incremental conversions. Blended national CPA decreases by ~$3.","budget_from":70000,"budget_to":70000,"budget_label":"$70k MXN geo reallocation","conv_delta":480,"cpa_before":45.2,"cpa_after":41.8,"color":"#E0309A"},{"id":"A6","type":"halo","priority":6,"product":"Nescaf\u00e9 \u2192 Maggi bundle","title":"Activate the halo \u2014 Nescaf\u00e9 buyers are Maggi buyers","signal":"34% of Nescaf\u00e9 converters also purchased Maggi in the same Walmart session. This cross-purchase signal is available through Walmart's purchase event pixel \u2014 no other DSP has it. Neither brand is currently targeting the other's buyers.","action":"Create a sequential audience: users who purchased Nescaf\u00e9 in the last 14 days \u2192 serve Maggi ads within 48 hours. Create a co-branded 300\u00d7250 'Desayuno perfecto' bundle creative (Nescaf\u00e9 + Maggi). Test in CDMX and Jalisco first.","outcome":"+340 estimated Maggi incremental conversions. First-ever cross-brand sequential campaign on Walmart Connect MX. Unique to Infillion.","budget_from":0,"budget_to":30000,"budget_label":"$30k MXN test budget","conv_delta":340,"cpa_before":42.1,"cpa_after":34.5,"color":"#FC5D3D"}],"totals":{"incremental_conv":4080,"current_conv":30990,"projected_conv":35070,"uplift_pct":13.2,"current_cpa":47.2,"projected_cpa":39.8,"cpa_improvement":7.4,"budget_neutral":true}};
+
+const TYPE_LABELS={
+  scale:'📈 Scale',reset:'🔄 Reset',unlock:'🔓 Unlock',geo:'📍 Geo shift',halo:'🔗 Halo'
+};
+const TYPE_DESC={
+  scale:'Increase investment in a proven winner',
+  reset:'Change approach on an underperformer — not a cut',
+  unlock:'Activate an underused signal or audience',
+  geo:'Rebalance geographic budget to efficiency leaders',
+  halo:'Exploit cross-purchase data unavailable elsewhere'
+};
+
+let pbFilter='all';
+function filterPB(type,btn){
+  pbFilter=type;
+  document.querySelectorAll('#pb-filters .fp').forEach(b=>b.classList.remove('on'));
+  btn.classList.add('on');
+  renderPBCards();
+}
+
+function renderPBCards(){
+  const actions=pbFilter==='all'?PB.actions:PB.actions.filter(a=>a.type===pbFilter);
+  document.getElementById('pb-cards').innerHTML=actions.map((a,i)=>{
+    const typeLabel=TYPE_LABELS[a.type]||a.type;
+    const convSign=a.conv_delta>=0?'+':'';
+    const cpaDelta=(a.cpa_before-a.cpa_after).toFixed(1);
+    const hasImprovement=a.cpa_after<a.cpa_before;
+    return `
+    <div class="pb-card" style="
+      background:#fff;border:0.5px solid rgba(26,26,26,.09);border-radius:12px;
+      padding:1.4rem 1.6rem;box-shadow:0 1px 4px rgba(0,0,0,.05);
+      border-left:3px solid ${a.color};
+      opacity:0;transform:translateY(12px);
+      transition:opacity .35s ${i*0.06}s,transform .35s ${i*0.06}s
+    ">
+      <div style="display:grid;grid-template-columns:1fr auto;align-items:start;gap:1rem;margin-bottom:1rem">
+        <div>
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:.4rem;flex-wrap:wrap">
+            <span style="padding:2px 9px;border-radius:8px;font-size:9px;font-weight:700;letter-spacing:.06em;background:${a.color}18;color:${a.color};border:0.5px solid ${a.color}44">${typeLabel}</span>
+            <span style="font-size:10px;font-weight:500;color:var(--slate)">${TYPE_DESC[a.type]}</span>
+            <span style="font-size:10px;font-weight:600;color:${a.color};margin-left:auto">Action ${a.id}</span>
+          </div>
+          <div style="font-family:var(--fd);font-size:20px;font-weight:700;color:var(--text);line-height:1.2">${a.title}</div>
+          <div style="font-size:11px;font-weight:500;color:${a.color};margin-top:.2rem">${a.product}</div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:.4rem;text-align:right;flex-shrink:0">
+          <div style="padding:.5rem .9rem;background:${a.color}12;border-radius:8px;border:0.5px solid ${a.color}33">
+            <div style="font-family:var(--fd);font-size:22px;font-weight:700;color:${a.color};line-height:1">${convSign}${a.conv_delta.toLocaleString()}</div>
+            <div style="font-size:9px;font-weight:600;color:var(--slate);letter-spacing:.08em;text-transform:uppercase">est. conv.</div>
+          </div>
+          ${hasImprovement?`<div style="font-size:10px;font-weight:600;color:#1A9E5C">CPA ↓ $${cpaDelta}</div>`:''}
+          <div style="font-size:10px;color:var(--slate)">${a.budget_label}</div>
+        </div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:.75rem">
+        <!-- Signal -->
+        <div style="padding:.75rem;background:var(--surface);border-radius:8px;border:0.5px solid var(--bd)">
+          <div style="font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--slate);margin-bottom:.4rem;display:flex;align-items:center;gap:5px">
+            <span style="width:5px;height:5px;border-radius:50%;background:${a.color};display:inline-block"></span> Signal
+          </div>
+          <div style="font-size:11.5px;color:var(--t2);line-height:1.65">${a.signal}</div>
+        </div>
+        <!-- Action -->
+        <div style="padding:.75rem;background:${a.color}06;border-radius:8px;border:0.5px solid ${a.color}22">
+          <div style="font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:${a.color};margin-bottom:.4rem;display:flex;align-items:center;gap:5px">
+            <span style="width:5px;height:5px;border-radius:50%;background:${a.color};display:inline-block"></span> The move
+          </div>
+          <div style="font-size:11.5px;color:var(--t2);line-height:1.65">${a.action}</div>
+        </div>
+        <!-- Outcome -->
+        <div style="padding:.75rem;background:rgba(26,158,92,.05);border-radius:8px;border:0.5px solid rgba(26,158,92,.2)">
+          <div style="font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#1A9E5C;margin-bottom:.4rem;display:flex;align-items:center;gap:5px">
+            <span style="width:5px;height:5px;border-radius:50%;background:#1A9E5C;display:inline-block"></span> Expected outcome
+          </div>
+          <div style="font-size:11.5px;color:var(--t2);line-height:1.65">${a.outcome}</div>
+        </div>
+      </div>
+
+      ${hasImprovement?`
+      <div style="display:flex;gap:.6rem;align-items:center;margin-top:.85rem;padding:.6rem .85rem;background:var(--surface);border-radius:8px">
+        <span style="font-size:10px;color:var(--slate);flex-shrink:0">CPA before:</span>
+        <strong style="font-size:13px;color:#E85C4A">$${a.cpa_before}</strong>
+        <span style="font-size:14px;color:var(--slate)">→</span>
+        <strong style="font-size:13px;color:#1A9E5C">$${a.cpa_after}</strong>
+        <span style="font-size:10px;color:var(--slate)">projected</span>
+        <div style="flex:1;height:4px;background:rgba(26,26,26,.06);border-radius:2px;overflow:hidden;margin:0 .5rem">
+          <div style="height:100%;width:${Math.round(a.cpa_after/a.cpa_before*100)}%;background:linear-gradient(90deg,#1A9E5C,#9920E7);border-radius:2px;transition:width .8s ease"></div>
+        </div>
+        <span style="font-size:10px;font-weight:600;color:#1A9E5C">-$${cpaDelta} per conversion</span>
+      </div>`:''}
+    </div>`;
+  }).join('');
+
+  // Animate in
+  requestAnimationFrame(()=>{
+    document.querySelectorAll('.pb-card').forEach(c=>{
+      c.style.opacity='1';c.style.transform='none';
+    });
+  });
+}
+
+// ── BEFORE/AFTER CHART ────────────────────────────────────────────────────
+function buildPBChart(){
+  destroy('pb-chart');
+  const labels=PB.actions.map(a=>a.product.split('–')[0].trim().split(' ').slice(0,2).join(' '));
+  const cpaB=PB.actions.map(a=>a.cpa_before);
+  const cpaA=PB.actions.map(a=>a.cpa_after);
+  C['pb-chart']=new Chart(document.getElementById('pb-chart'),{
+    type:'bar',
+    data:{
+      labels,
+      datasets:[
+        {label:'April CPA',data:cpaB,backgroundColor:'rgba(232,92,74,.2)',borderColor:'#E85C4A',borderWidth:1.5,borderRadius:4},
+        {label:'May projected CPA',data:cpaA,backgroundColor:'rgba(26,158,92,.2)',borderColor:'#1A9E5C',borderWidth:1.5,borderRadius:4},
+      ]
+    },
+    options:{
+      responsive:true,maintainAspectRatio:false,
+      animation:{duration:700,easing:'easeInOutQuart'},
+      interaction:{mode:'index',intersect:false},
+      plugins:{
+        legend:{labels:{font:{size:9},boxWidth:10,color:SLATE,padding:8}},
+        tooltip:{
+          backgroundColor:'rgba(255,255,255,.97)',borderColor:'rgba(26,26,26,.1)',borderWidth:1,
+          titleColor:'#1A1A1A',bodyColor:'#7A7280',
+          callbacks:{label:c=>' $'+c.raw+' CPA'}
+        }
+      },
+      scales:{
+        x:{grid:{display:false},ticks:{color:SLATE,font:{size:8}}},
+        y:{grid:{color:'rgba(26,26,26,.05)'},ticks:{color:SLATE,font:{size:8},callback:v=>'$'+v}}
+      }
+    }
+  });
+}
+
+// ── INIT ────────────────────────────────────────────────────────────────────
+drawMap();
+drawTrend();
+renderProd();
+renderPodium();
+showHalo('Nescafé Clásico', document.querySelector('[onclick*="Nescafé Clásico"]'));
+buildAudience();
+buildHeatmap();
+renderGeo();
+buildGeoChart();
+  renderPBCards();
+  buildPBChart();
+</script>
+</body>
+</html>
